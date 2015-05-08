@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html ng-app="demoapp">
+  <head>
+    <meta charset="utf-8">
+
+    <title></title>
+
+    <!-- add the stylesheets here -->
+
+    <script src="components/angular/angular.min.js"></script>
+    <script src="components/leaflet/dist/leaflet.js"></script>
+    <script src="components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
+    <link rel="stylesheet" href="components/leaflet/dist/leaflet.css" />
+
+
+    <link rel="stylesheet" href="components/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="css/style.css" rel="stylesheet"/>
+
+
+
+
+
+
+    <!-- cordova script (this will be a 404 during development)
+    <script src="lib/ngCordova/dist/ng-cordova.js"></script> -->
+
+
+    <!-- your app's js -->
+
+ <script src="js/app.js"></script>
+
+ <style>
+        html,body {
+            height: 100%;
+        }
+        .angular-leaflet-map {
+
+            height: 100%;
+        }
+        .fullheight {
+            height: 100%;
+        }
+    </style>
+
+
+
+  </head>
+  <body ng-controller="DemoController">
+
+<div id="map">
+
+              <leaflet  defaults="mapDefaults" paths="paths" center="map.center" markers="map.markers"  height='100%'>
+    </leaflet>
+<div/>
+
+
+
+  </body>
+</html>
