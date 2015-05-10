@@ -24,10 +24,16 @@ module.exports = function (grunt) {
         }
       }
     },
+    open: {
+  server: {
+    url: 'http://localhost:3000',
+    app: 'firefox'
+  }
+},
     watch: {
       options: {
         nospawn: true,
-        livereload: reloadPort
+        livereload: true
       },
       js: {
         files: [
@@ -51,7 +57,7 @@ module.exports = function (grunt) {
           'app/views/*.jade',
           'app/views/**/*.jade'
         ],
-        options: { livereload: reloadPort }
+        options: { livereload: true }
       }
     }
   });
