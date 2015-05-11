@@ -101,17 +101,27 @@ app.controller('DemoController', function($scope, leafletData) {
 
       drawnItems.addLayer(layer);
       var newZone = {};
-      var newZone = layer.toGeoJSON();
+      newZone.proprietes = {};
+      newZone.proprietes.test = {};
 
-      console.log(newZone);
-      var callback = function(error, zoneSaved) {
-        if (error) {
-          $scope.error = error;
-        }
-        console.log(zoneSaved);
 
-        ZoneService.post(callback, newZone);
-      };
+      var newZone = JSON.stringify(layer.toGeoJSON());
+      var json = JSON.parse(newZone);
+      console.log(json.type);
+
+
+
+
+
+
+      // var callback = function(error, zoneSaved) {
+      //   if (error) {
+      //     $scope.error = error;
+      //   }
+      //   console.log(zoneSaved);
+
+      //   ZoneService.post(callback, newZone);
+      // };
 
 
     });
