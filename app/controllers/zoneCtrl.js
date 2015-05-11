@@ -13,7 +13,7 @@ function convertZone(zone, ownerData) {
     id: zone.id,
     geometry: zone.geometry,
     type: zone.type,
-    proprietes: zone.proprietes,
+    properties: zone.properties,
   }
 
 
@@ -36,17 +36,17 @@ router.route('/')
   })
 
 .post(function(req, res, next) {
+  console.log(req.body);
   var zone = new Zone({
-    "type": req.type,
-    "proprietes": req.proprietes
-    //"geometry": req.geometry
+   type : req.body.type,
+   properties : req.body.properties
   });
 
   zone.save(function(err, zoneSaved) {
     if (err) {
       return res.status(400).send(err.message);
     }
-    res.status(201).json(convertZone(zoneSaved));
+    res.status(201).json(convertZone(zoneSaved.zone.geometry));
 
   });
 });

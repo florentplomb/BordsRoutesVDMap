@@ -6,17 +6,15 @@ var mongoose = require('mongoose'),
 
 
 var ZoneSchema = new Schema({
-	type: String,
-	proprietes :[{
-	}
-	]
-	// geometry: {
-	// 	type:GeoJSON.MultiLineString
-	// }
+ type: String,
+ properties: Schema.Types.Mixed,
+ geometry: Schema.Types.Mixed
 });
 
 ZoneSchema.index({
-	geomerty: '2dsphere'
+	zone:{
+		geomerty: '2dsphere'
+	}
 });
 
 ZoneSchema.virtual('date')
