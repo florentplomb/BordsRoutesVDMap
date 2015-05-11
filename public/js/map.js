@@ -100,14 +100,17 @@ app.controller('DemoController', function($scope, leafletData) {
       var layer = e.layer;
 
       drawnItems.addLayer(layer);
-      var newZone = {};
-      newZone.proprietes = {};
-      newZone.proprietes.test = {};
+ //
 
 
-      var newZone = JSON.stringify(layer.toGeoJSON());
-      var json = JSON.parse(newZone);
-      console.log(json.type);
+      var newZone = layer.toGeoJSON();
+      newZone.properties.commune = "Les clees";
+      console.log(newZone);
+       console.log(newZone.type);
+      console.log(newZone.properties);
+
+       console.log(JSON.stringify(newZone));
+
 
 
 
