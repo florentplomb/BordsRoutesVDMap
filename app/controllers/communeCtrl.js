@@ -2,7 +2,8 @@ var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose'),
   Commune = mongoose.model('Commune'),
-  _ = require('underscore');
+  _ = require('underscore'),
+  polygonCenter = require('geojson-polygon-center');
 
 module.exports = function(app) {
   app.use('/api/communes', router);
@@ -16,16 +17,14 @@ function convertCommune(commune, ownerData) {
     properties: commune.properties,
   }
 
-
-
   return communeConverted;
 }
 
 
-router.route('/name')
+router.route('/')
   .get(function(req, res, next) {
     Commune.find()
-    .select('properties.NAME')
+
       .exec(function(err, communes) {
         if (err) return next(err);
         res.json(_.map(communes, function(commune) {
@@ -51,10 +50,37 @@ router.route('/name')
   });
 });
 
+
+
+
+router.route('/name')
+  .get(function(req, res, next) {
+    Commune.find()
+    .select('properties.NAME')
+      .exec(function(err, communes) {
+        if (err) return next(err);
+          return res.json(200, communes);
+      });
+
+  });
+
+router.route('/center')
+  .get(function(req, res, next) {
+    Commune.findOne({"properties.NAME":"Les Clées"})
+    .select('properties.NAME geometry')
+      .exec(function(err, commune) {
+        if (err) return next(err);
+        var center = polygonCenter(commune.geometry)
+       return res.json(200, center);
+      });
+
+  });
+
 router.route('/:id')
   .get(function(req, res, next) {
     Commune.findById(req.params.id)
     .exec(function(err, commune) {
-      res.json(converterService.convertCommune(commune));
+      return res.json(200, commune);
     });
-  })
+  });
+

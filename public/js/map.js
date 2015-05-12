@@ -24,7 +24,23 @@ app.controller('MapCtrl', function($scope,leafletData, ZonesService,CommunesServ
   $scope.map.center = yverdon;
 
 
+// Center map on commune selected
+  $scope.$watch( function( ) {
+    return $scope.selectcommunesName;
+}, function( newValue, oldValue ) {
+  if ($scope.selectcommunesName) {
+      console.log($scope.selectcommunesName.title);
 
+
+  };
+
+
+} );
+
+
+
+
+// Autocomplete communes
 
   CommunesService.getName(function(error, communesName) {
     if (error) {
@@ -38,6 +54,8 @@ app.controller('MapCtrl', function($scope,leafletData, ZonesService,CommunesServ
 
 
   });
+
+  // Display commune
 
   var callback = function(error, zones) {
     if (error) {

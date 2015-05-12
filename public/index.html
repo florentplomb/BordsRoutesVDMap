@@ -52,12 +52,11 @@
       <div id="searchCommunes">
 
 
-
         <div >
-            <angucomplete id="ex1" placeholder="Search countries" pause="100" selectedobject="SelectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="1" inputclass="form-control form-control-small" matchclass="highlight" />
+            <angucomplete id="ex1" placeholder="Search countries" pause="100" selectedobject="selectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="1" inputclass="form-control form-control-small" matchclass="highlight" />
         </div>
-        <div class="" ng-show="selectedCountry">
-            You selected <span class="bold-span">{{selectedCountry.originalObject.name}}</span> which has a country code of <span class="bold-span">{{selectedCountry.originalObject.code}}</span>
+        <div class="" ng-show="selectcommunesName">
+            You selected <span class="bold-span">{{selectcommunesName.originalObject.NAME}}</span>
         </div>
 
     </div>
