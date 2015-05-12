@@ -1,9 +1,9 @@
 'use strict';
 
-var app = angular.module('app', ['leaflet-directive','angucomplete']);
+var app = angular.module('app', ['leaflet-directive', 'angucomplete']);
 var apiUrl = "http://localhost:3000/api";
 
-app.controller('MapCtrl', function($scope,leafletData, ZonesService,CommunesService) {
+app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesService) {
 
   var zonesTalus = [];
 
@@ -14,6 +14,8 @@ app.controller('MapCtrl', function($scope,leafletData, ZonesService,CommunesServ
   };
 
 
+
+    $scope.layers = {};
   $scope.geojson = {};
   $scope.geojson.data = [];
 
@@ -23,34 +25,66 @@ app.controller('MapCtrl', function($scope,leafletData, ZonesService,CommunesServ
   $scope.map.center = {};
   $scope.map.center = yverdon;
 
+    $scope.map.layers = {
+      baselayers: {
+        googleTerrain: {
+          name: 'Google Terrain',
+          layerType: 'TERRAIN',
+          type: 'google'
+        },
+        googleHybrid: {
+          name: 'Google Hybrid',
+          layerType: 'HYBRID',
+          type: 'google'
+        },
+        googleRoadmap: {
+          name: 'Google Streets',
+          layerType: 'ROADMAP',
+          type: 'google'
+        }
+      }
+    }
 
-// Center map on commune selected
-  $scope.$watch( function( ) {
+
+  // Center map on commune selected
+  $scope.$watch(function() {
     return $scope.selectcommunesName;
-}, function( newValue, oldValue ) {
-  if ($scope.selectcommunesName) {
+  }, function(newValue, oldValue) {
+    if ($scope.selectcommunesName) {
       console.log($scope.selectcommunesName.title);
 
+      CommunesService.getCenter(function(error, centerDist) {
+        if (error) {
+          $scope.error = error;
+        }
+        console.log(centerDist.distTot);
+        $scope.map.center = {
+          lng: centerDist.center.coordinates[0],
+          lat: centerDist.center.coordinates[1],
+          zoom: 14
+        };
 
-  };
+      },$scope.selectcommunesName.title)
 
 
-} );
+    };
+
+
+  });
 
 
 
-
-// Autocomplete communes
+  // Autocomplete communes
 
   CommunesService.getName(function(error, communesName) {
     if (error) {
       $scope.error = error;
     }
 
-    angular.forEach(communesName, function(item,key) {
-   // console.log(item.properties.NAME);
-     $scope.communesName.push(item.properties)
-})
+    angular.forEach(communesName, function(item, key) {
+      // console.log(item.properties.NAME);
+      $scope.communesName.push(item.properties)
+    })
 
 
   });
@@ -74,20 +108,22 @@ app.controller('MapCtrl', function($scope,leafletData, ZonesService,CommunesServ
           return feature.properties.style;
         },
         onEachFeature: function(feature, layer) {
-          layer.bindPopup(feature.properties.COMMUNE);
+          layer.bindPopup(feature.properties.COMMUNE +" Id: " + feature.properties.ID_MAPINFO);
         }
       }));
 
     });
   }
 
-ZonesService.get(callback);
+  ZonesService.get(callback);
 
-  var mapboxTileLayer = 'http://api.tiles.mapbox.com/v4/' + 'cleliapanchaud.kajpf86n';
-  mapboxTileLayer = mapboxTileLayer + '/{z}/{x}/{y}.png?access_token=' + 'pk.eyJ1IjoiY2xlbGlhcGFuY2hhdWQiLCJhIjoiM2hMOEVXYyJ9.olp7FrLzmzSadE07IY8OMQ';
-  $scope.mapDefaults = {
-    tileLayer: mapboxTileLayer
-  };
+  // var mapboxTileLayer = 'http://api.tiles.mapbox.com/v4/' + 'cleliapanchaud.kajpf86n';
+  // mapboxTileLayer = mapboxTileLayer + '/{z}/{x}/{y}.png?access_token=' + 'pk.eyJ1IjoiY2xlbGlhcGFuY2hhdWQiLCJhIjoiM2hMOEVXYyJ9.olp7FrLzmzSadE07IY8OMQ';
+  // $scope.mapDefaults = {
+  //   tileLayer: mapboxTileLayer
+  // };
+
+
 });
 
 app.factory("ZonesService", function($http) {
@@ -133,6 +169,14 @@ app.factory("CommunesService", function($http) {
   return {
     getName: function(callback) {
       $http.get(apiUrl + "/communes/name", config).success(function(data) {
+        var zone = data;
+        callback(null, zone);
+      }).error(function(error) {
+        callback(error);
+      });
+    },
+    getCenter: function(callback, name) {
+      $http.get(apiUrl + "/communes/center?name=" + name, config).success(function(data) {
         var zone = data;
         callback(null, zone);
       }).error(function(error) {
