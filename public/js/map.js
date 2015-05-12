@@ -1,30 +1,49 @@
 'use strict';
 
-var app = angular.module('app', ['leaflet-directive']);
+var app = angular.module('app', ['leaflet-directive','angucomplete']);
 var apiUrl = "http://localhost:3000/api";
 
-app.controller('MapCtrl', function($scope, $http, leafletData, ZonesService) {
+app.controller('MapCtrl', function($scope,leafletData, ZonesService,CommunesService) {
 
-  var geojsonFeature = [];
+  var zonesTalus = [];
+
   var yverdon = {
     lat: 46.841759385352,
     lng: 6.64475440979004,
     zoom: 14
   };
 
-  $scope.map = {};
+
   $scope.geojson = {};
   $scope.geojson.data = [];
 
+  $scope.communesName = [];
+  $scope.map = {};
   $scope.map.markers = [];
   $scope.map.center = {};
   $scope.map.center = yverdon;
+
+
+
+
+  CommunesService.getName(function(error, communesName) {
+    if (error) {
+      $scope.error = error;
+    }
+
+    angular.forEach(communesName, function(item,key) {
+   // console.log(item.properties.NAME);
+     $scope.communesName.push(item.properties)
+})
+
+
+  });
 
   var callback = function(error, zones) {
     if (error) {
       $scope.error = error;
     }
-    geojsonFeature = zones;
+    zonesTalus = zones;
 
     // $scope.geojson.data = { "type": "FeatureCollection",
     //            "features": zones};
@@ -32,7 +51,7 @@ app.controller('MapCtrl', function($scope, $http, leafletData, ZonesService) {
 
     leafletData.getMap().then(function(map) {
 
-      map.addLayer(L.geoJson(geojsonFeature, {
+      map.addLayer(L.geoJson(zonesTalus, {
         style: function(feature) {
           return feature.properties.style;
         },
@@ -85,6 +104,26 @@ app.factory("ZonesService", function($http) {
   };
 });
 
+app.factory("CommunesService", function($http) {
+
+  var config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return {
+    getName: function(callback) {
+      $http.get(apiUrl + "/communes/name", config).success(function(data) {
+        var zone = data;
+        callback(null, zone);
+      }).error(function(error) {
+        callback(error);
+      });
+    }
+  };
+});
+
 
 
 /////////////////////////////////////////
@@ -97,7 +136,7 @@ app.factory("ZonesService", function($http) {
 //  leafletData.getMap().then(function(map) {
 //    var drawnItems = $scope.controls.edit.featureGroup;
 
-//    L.geoJson(geojsonFeature).addTo(map);
+//    L.geoJson(zonesTalus).addTo(map);
 
 //    map.on('draw:created', function(e) {
 //      var layer = e.layer;

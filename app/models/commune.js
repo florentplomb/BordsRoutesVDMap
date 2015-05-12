@@ -4,22 +4,21 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 
-
-var ZoneSchema = new Schema({
+var CommuneSchema = new Schema({
  type: String,
  properties: Schema.Types.Mixed,
  geometry: Schema.Types.Mixed
 });
 
-ZoneSchema.index({
-	zone:{
+CommuneSchema.index({
+	commune:{
 		geomerty: '2dsphere'
 	}
 });
 
-ZoneSchema.virtual('date')
+CommuneSchema.virtual('date')
 	.get(function() {
 		return this._id.getTimestamp();
 	});
 
-mongoose.model('Zone', ZoneSchema);
+mongoose.model('Commune', CommuneSchema);

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="app">
-  <head>
+<head>
     <meta charset="utf-8">
 
     <title></title>
@@ -11,11 +11,13 @@
     <script src="components/leaflet/dist/leaflet.js"></script>
     <script src="components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
     <script src="components/leaflet.draw/dist/leaflet.draw.js"></script>
-    <script src="components/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
 
-    <link rel="stylesheet" href="components/leaflet.markercluster/dist/MarkerCluster.css"/>
-     <link rel="stylesheet" href="components/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+    <script src="components/angucomplete/angucomplete.js"></script>
+
+
+    <link rel="stylesheet" href="components/angucomplete/angucomplete.css"/>
+
     <link rel="stylesheet" href="components/leaflet.draw/dist/leaflet.draw.css"/>
     <link rel="stylesheet" href="components/leaflet/dist/leaflet.css"/>
     <link rel="stylesheet" href="components/font-awesome/css/font-awesome.min.css">
@@ -32,33 +34,39 @@
 
     <!-- your app's js -->
 
- <script src="js/map.js"></script>
-
- <style>
-        html,body {
-            height: 100%;
-        }
-        .angular-leaflet-map {
-
-            height: 100%;
-        }
-        .fullheight {
-            height: 100%;
-        }
-    </style>
+    <script src="js/map.js"></script>
 
 
 
-  </head>
-  <body ng-controller="MapCtrl">
 
-<div id="map">
+</head>
+<body ng-controller="MapCtrl">
+    <div id="map-wrapper">
 
-              <leaflet  defaults="mapDefaults" geojson="geojson"  center="map.center"   height='100%'>
-    </leaflet>
-<div/>
+        <div id="map">
+
+          <leaflet  defaults="mapDefaults" geojson="geojson"  center="map.center"   height='100%'>
+          </leaflet>
+      </div>
+
+      <div id="searchCommunes">
 
 
 
-  </body>
+        <div >
+            <angucomplete id="ex1" placeholder="Search countries" pause="100" selectedobject="SelectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="1" inputclass="form-control form-control-small" matchclass="highlight" />
+        </div>
+        <div class="" ng-show="selectedCountry">
+            You selected <span class="bold-span">{{selectedCountry.originalObject.name}}</span> which has a country code of <span class="bold-span">{{selectedCountry.originalObject.code}}</span>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+
+
+</body>
 </html>
