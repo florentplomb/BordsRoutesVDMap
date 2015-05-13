@@ -53,14 +53,15 @@ app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesSe
     if ($scope.selectcommunesName) {
       console.log($scope.selectcommunesName.title);
 
-      CommunesService.getCenter(function(error, centerDist) {
+      CommunesService.getCenter(function(error, infoCommunes) {
         if (error) {
           $scope.error = error;
         }
-        console.log(centerDist.distTot);
+        console.log(infoCommunes);
+        $scope.infoCommunes = infoCommunes;
         $scope.map.center = {
-          lng: centerDist.center.coordinates[0],
-          lat: centerDist.center.coordinates[1],
+          lng: infoCommunes.center.coordinates[0],
+          lat: infoCommunes.center.coordinates[1],
           zoom: 14
         };
 
@@ -177,8 +178,8 @@ app.factory("CommunesService", function($http) {
     },
     getCenter: function(callback, name) {
       $http.get(apiUrl + "/communes/center?name=" + name, config).success(function(data) {
-        var zone = data;
-        callback(null, zone);
+        var infoCommunes = data;
+        callback(null, infoCommunes);
       }).error(function(error) {
         callback(error);
       });

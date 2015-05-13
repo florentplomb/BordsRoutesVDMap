@@ -5,7 +5,10 @@ var express = require('express'),
   Zone = mongoose.model('Zone'),
   _ = require('underscore'),
   polygonCenter = require('geojson-polygon-center'),
-  geoJsonTool = require('geojson-tools');
+  geoJsonTool = require('geojson-tools'),
+  fs = require('fs');
+
+
 
 
 
@@ -42,6 +45,9 @@ router.route('/')
     });
 
   })
+
+
+
 
 
 
@@ -83,8 +89,7 @@ router.route('/center')
             }
           })
           .exec(function(err, zones) {
-            console.log("Nombre de talus intersect :" + _.size(zones));
-
+            var nbrZones = _.size(zones);
             var distTot = 0;
             zones.forEach(function(zone) {
               var dist = 0;
@@ -96,12 +101,13 @@ router.route('/center')
             // console.log(zones[0].geometry.coordinates);
             // console.log("distance talus:" + geoJsonTool.getDistance(zones[0].geometry.coordinates));
 
-            var centerDist = {};
+            var infoCommunes = {};
 
-            centerDist.center = center;
-            centerDist.distTot = distTot;
+            infoCommunes.center = center;
+            infoCommunes.distTot = distTot;
+            infoCommunes.nbrZones = nbrZones
 
-            return res.status(200).json(centerDist)
+            return res.status(200).json(infoCommunes)
 
 
           });

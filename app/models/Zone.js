@@ -3,12 +3,22 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
-
-
 var ZoneSchema = new Schema({
  type: String,
- properties: Schema.Types.Mixed,
- geometry: Schema.Types.Mixed
+ properties: {
+ 	flores: [ { type: Schema.Types.ObjectId, ref: 'Flore' } ],
+ 	PLUMETTAZ : String,
+ 	FIABILITE : String,
+ 	ID_MAPINFO: Number,
+ 	TYPE:String,
+ 	COMMUNE:String,
+ 	LOCALISATI : String,
+    CANTONALE : String,
+    DESCRIPTIO : String,
+    ENTRETIEN : String
+ },
+ geometry: Schema.Types.Mixed,
+
 });
 
 ZoneSchema.index({

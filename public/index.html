@@ -56,13 +56,20 @@
       <div id="searchCommunes">
 
 
-        <div >
+        <div>
             <angucomplete id="ex1" placeholder="Search countries" pause="100" selectedobject="selectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="1" inputclass="form-control form-control-small" matchclass="highlight" />
         </div>
         <div class="" ng-show="selectcommunesName">
             You selected <span class="bold-span">{{selectcommunesName.originalObject.NAME}}</span>
         </div>
 
+    </div>
+
+          <div id="infoCommunes" ng-show="selectcommunesName">
+        <h2> Informations </h2>
+        <h3> Commune : {{selectcommunesName.originalObject.NAME}} </h3>
+        <h4> Nombre de zones : {{infoCommunes.nbrZones}} </h4>
+        <h4> Distance totale des zones : {{infoCommunes.distTot}} km </h4>
     </div>
 
 

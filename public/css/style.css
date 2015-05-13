@@ -13,6 +13,16 @@ body {
   width: 20%;
   left: 1%;
 }
+#infoCommunes {
+  position: absolute;
+  top: 10%;
+  height: 30%;
+  width: 20%;
+  right: 1%;
+  background: #ffffff;
+  border: solid 1px;
+  padding: 1em;
+}
 a {
   color: #00B7FF;
 }
