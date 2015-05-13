@@ -12,6 +12,7 @@ module.exports = function(app) {
 router.route('/')
   .get(function(req, res, next) {
     Zone.find()
+      .populate("properties.flores")
       .exec(function(err, zones) {
         if (err) return next(err);
 
@@ -47,8 +48,7 @@ router.route('/populate')
               })
               zone.save(function(err, zoneSaved) {});
             })
-
-            return res.status(200).send("Fleur ok");
+            return res.status(200).send("Fleur ajouté au talus ok");
 
           })
       })

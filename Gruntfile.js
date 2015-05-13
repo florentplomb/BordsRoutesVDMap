@@ -25,11 +25,11 @@ module.exports = function (grunt) {
       }
     },
     open: {
-  server: {
-    url: 'http://localhost:3000',
-    app: 'firefox'
-  }
-},
+      all: {
+        // Gets the port from the connect configuration
+        path: 'http://localhost:<%= connect.all.options.port%>'
+      }
+    },
     watch: {
       options: {
         nospawn: true,

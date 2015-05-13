@@ -12,27 +12,19 @@ module.exports = function(app) {
 router.route('/')
   .get(function(req, res, next) {
     Flore.find()
-      .exec(function(err, zones) {
+      .exec(function(err, flores) {
         if (err) return next(err);
-
-        console.log(zones[0]);
-
-        var flores = [];
-        zones.forEach(function(zone) {
-
-          var parse = {};
-          parse.id = parseInt(zone.talus_id);
-          parse.espece = zone.espece;
-          parse.esepce_def = zone.espece_def;
-          parse.NO_SISF_DEF = parseInt(zone.NO_SISF_DEF);
-          flores.push(parse);
-
-        });
-
-
         return res.status(200).send(flores)
+      });
 
-
+  })
+router.route('/espece')
+  .get(function(req, res, next) {
+    Flore.find()
+      .select('espece')
+      .exec(function(err, flores) {
+        if (err) return next(err);
+        return res.status(200).send(flores)
       });
 
   })

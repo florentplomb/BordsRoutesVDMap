@@ -3,7 +3,7 @@
 var app = angular.module('app', ['leaflet-directive', 'angucomplete']);
 var apiUrl = "http://localhost:3000/api";
 
-app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesService) {
+app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, CommunesService,FloreService) {
 
   var zonesTalus = [];
 
@@ -15,35 +15,36 @@ app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesSe
 
 
 
-    $scope.layers = {};
-  $scope.geojson = {};
-  $scope.geojson.data = [];
+  $scope.layers = {};
+  // $scope.geojson = {};
+  // $scope.geojson.data = [];
 
   $scope.communesName = [];
+  $scope.especesName = [];
   $scope.map = {};
   $scope.map.markers = [];
   $scope.map.center = {};
   $scope.map.center = yverdon;
 
-    $scope.map.layers = {
-      baselayers: {
-        googleTerrain: {
-          name: 'Google Terrain',
-          layerType: 'TERRAIN',
-          type: 'google'
-        },
-        googleHybrid: {
-          name: 'Google Hybrid',
-          layerType: 'HYBRID',
-          type: 'google'
-        },
-        googleRoadmap: {
-          name: 'Google Streets',
-          layerType: 'ROADMAP',
-          type: 'google'
-        }
+  $scope.map.layers = {
+    baselayers: {
+      googleTerrain: {
+        name: 'Google Terrain',
+        layerType: 'TERRAIN',
+        type: 'google'
+      },
+      googleHybrid: {
+        name: 'Google Hybrid',
+        layerType: 'HYBRID',
+        type: 'google'
+      },
+      googleRoadmap: {
+        name: 'Google Streets',
+        layerType: 'ROADMAP',
+        type: 'google'
       }
     }
+  }
 
 
   // Center map on commune selected
@@ -51,13 +52,13 @@ app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesSe
     return $scope.selectcommunesName;
   }, function(newValue, oldValue) {
     if ($scope.selectcommunesName) {
-      console.log($scope.selectcommunesName.title);
+    //  console.log($scope.selectcommunesName.title);
 
       CommunesService.getCenter(function(error, infoCommunes) {
         if (error) {
           $scope.error = error;
         }
-        console.log(infoCommunes);
+       // console.log(infoCommunes);
         $scope.infoCommunes = infoCommunes;
         $scope.map.center = {
           lng: infoCommunes.center.coordinates[0],
@@ -65,12 +66,9 @@ app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesSe
           zoom: 14
         };
 
-      },$scope.selectcommunesName.title)
-
+      }, $scope.selectcommunesName.title)
 
     };
-
-
   });
 
 
@@ -83,8 +81,23 @@ app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesSe
     }
 
     angular.forEach(communesName, function(item, key) {
-      // console.log(item.properties.NAME);
-      $scope.communesName.push(item.properties)
+
+      $scope.communesName.push(item.properties);
+    })
+
+
+  });
+
+    FloreService.getEspece(function(error, especes) {
+    if (error) {
+      $scope.error = error;
+    }
+
+    angular.forEach(especes, function(item, key) {
+
+
+      $scope.especesName.push(item);
+
     })
 
 
@@ -98,18 +111,31 @@ app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesSe
     }
     zonesTalus = zones;
 
+    var selecFleur = "Centaurea jacea";
+    var zonesFiltree = $filter('filter')(zones, function(zones) {
+
+      var tabFleure = zones.properties.flores;
+      var validate = false;
+      angular.forEach(tabFleure, function(item, key) {
+        if (item.espece == selecFleur) {
+          validate = true;
+        };
+      })
+      return validate;
+    });
+   // console.log(zonesFiltree);
+
+
     // $scope.geojson.data = { "type": "FeatureCollection",
     //            "features": zones};
 
-
     leafletData.getMap().then(function(map) {
-
       map.addLayer(L.geoJson(zonesTalus, {
         style: function(feature) {
           return feature.properties.style;
         },
         onEachFeature: function(feature, layer) {
-          layer.bindPopup(feature.properties.COMMUNE +" Id: " + feature.properties.ID_MAPINFO);
+          layer.bindPopup(feature.properties.COMMUNE + " Id: " + feature.properties.ID_MAPINFO);
         }
       }));
 
@@ -126,6 +152,27 @@ app.controller('MapCtrl', function($scope, leafletData, ZonesService, CommunesSe
 
 
 });
+
+app.factory("FloreService", function($http) {
+
+  var config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return {
+    getEspece: function(callback) {
+      $http.get(apiUrl + "/flores/espece", config).success(function(data) {
+        var zone = data;
+        callback(null, zone);
+      }).error(function(error) {
+        callback(error);
+      });
+    }
+  };
+});
+
 
 app.factory("ZonesService", function($http) {
 

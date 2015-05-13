@@ -57,7 +57,14 @@
 
 
         <div>
-            <angucomplete id="ex1" placeholder="Search countries" pause="100" selectedobject="selectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="1" inputclass="form-control form-control-small" matchclass="highlight" />
+            <angucomplete id="ex1" placeholder="Indiqué le nom d'une commune" pause="100" selectedobject="selectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
+        </div>
+        <div class="" ng-show="selectcommunesName">
+            You selected <span class="bold-span">{{selectcommunesName.originalObject.NAME}}</span>
+        </div>
+
+         <div>
+            <angucomplete id="ex2" placeholder="Indiqué le nom d'une commune" pause="100" selectedobject="selectespecesName" localdata="especesName" searchfields="espece" titlefield="espece" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
         </div>
         <div class="" ng-show="selectcommunesName">
             You selected <span class="bold-span">{{selectcommunesName.originalObject.NAME}}</span>
