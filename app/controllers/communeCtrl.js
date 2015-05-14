@@ -1,9 +1,9 @@
 var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose'),
-  Commune = mongoose.model('Commune'),
   Zone = mongoose.model('Zone'),
   _ = require('underscore'),
+  Commune = mongoose.model('Commune'),
   polygonCenter = require('geojson-polygon-center'),
   geoJsonTool = require('geojson-tools'),
   fs = require('fs');

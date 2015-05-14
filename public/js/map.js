@@ -1,7 +1,8 @@
 'use strict';
 
 var app = angular.module('app', ['leaflet-directive', 'angucomplete', ]);
-var apiUrl = "http://localhost:3000/api";
+//var apiUrl = "http://localhost:3000/api";
+var apiUrl = "http://192.168.0.23:3000/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
@@ -98,7 +99,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
         return validate;
       });
 
-      console.log(zones.Filtree);
+      console.log(zonesFiltree);
 
       $scope.geojson.data = {
         "type": "FeatureCollection",

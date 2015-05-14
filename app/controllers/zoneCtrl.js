@@ -3,6 +3,7 @@ var express = require('express'),
   mongoose = require('mongoose'),
   Zone = mongoose.model('Zone'),
   Flore = mongoose.model('Flore'),
+  Commune = mongoose.model('Commune'),
   _ = require('underscore');
 
 module.exports = function(app) {
@@ -16,7 +17,18 @@ router.route('/')
       .exec(function(err, zones) {
         if (err) return next(err);
 
-         return res.status(200).json(zones)
+        return res.status(200).json(zones)
+      });
+
+  });
+router.route('/:id')
+  .get(function(req, res, next) {
+    Zone.findById(req.params.id)
+      .select("properties.communes.properties")
+      .populate("properties.flores properties.communes")
+      .exec(function(err, zones) {
+        if (err) return next(err);
+        return res.status(200).json(zones)
       });
 
   });
@@ -28,28 +40,71 @@ router.route('/info')
       .populate("properties.flores")
       .exec(function(err, zones) {
         if (err) return next(err);
-       return res.status(200).json(zones)
+        return res.status(200).json(zones)
       });
 
   });
 
-router.route('/populate')
-  .get(function(req, res, next) {
+router.route('/populateFleures')
+  .post(function(req, res, next) {
+    var cpt = 0;
     Zone.find()
       .exec(function(err, zones) {
         if (err) return next(err);
         Flore.find()
           .exec(function(err, flores) {
+            if (err) return next(err);;
             zones.forEach(function(zone) {
               flores.forEach(function(flore) {
                 if (parseInt(zone.properties.ID_MAPINFO) === parseInt(flore.talus_id)) {
-                  zone.properties.flores.push(flore.id);
+                  if (!_.contains(zone.properties.flores, flore.id)) {
+                    zone.properties.flores.push(flore.id);
+                    zone.save(function(err, zoneSaved) {
+                      cpt++
+                      if (err) return next(err)
+                    });
+                  }
                 }
               })
-              zone.save(function(err, zoneSaved) {});
             })
-            return res.status(200).send("Fleur ajouté au talus ok");
+            return res.status(200).send("Fleur ajouté au talus ok"+cpt+"Enregistrements");
 
           })
       })
+  });
+
+router.route('/populateCommunes')
+  .post(function(req, res, next) {
+    var cpt = 0;
+    Zone.find()
+      .exec(function(err, zones) {
+        if (err) return next(err);
+        zones.forEach(function(zone) {
+          Commune.find({
+              geometry: {
+                $geoIntersects: {
+                  $geometry: zone.geometry
+                }
+              }
+            })
+            .exec(function(err, communes) {
+              console.log(communes);
+              if (err) return next(err);
+              communes.forEach(function(commune) {
+              //  if (_.contains(zone.properties.communes, commune.id)) {
+                  zone.properties.communes.push(commune.id);
+                  zone.save(function(err, zoneSaved) {
+                    cpt++
+                    if (err) return next(err)
+                  });
+              //  }
+              });
+
+            });
+
+
+        });
+         return res.status(200).send("commune ajouté au talus ok -"+cpt+"Enregistrements");
+      });
+
   });

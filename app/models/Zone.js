@@ -7,6 +7,7 @@ var ZoneSchema = new Schema({
  type: String,
  properties: {
  	flores: [ { type: Schema.Types.ObjectId, ref: 'Flore' } ],
+ 	communes: [ { type: Schema.Types.ObjectId, ref: 'Commune' } ],
  	PLUMETTAZ : String,
  	FIABILITE : String,
  	ID_MAPINFO: Number,
