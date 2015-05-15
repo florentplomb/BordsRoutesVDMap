@@ -8,8 +8,8 @@ var config = {
     app: {
       name: 'appmap'
     },
-    port: 3000,
-    db: 'mongodb://localhost/appmap-development'
+    port: 27017,
+    db: 'mongodb://127.0.0.1/appmap-development'
   },
 
   test: {
@@ -26,8 +26,8 @@ var config = {
     app: {
       name: 'appmap'
     },
-    port: 3000,
-    db: 'mongodb://localhost/appmap-production'
+    port: 27017,
+    db: 'mongodb://127.0.0.1/appmap-development'
   }
 };
 
