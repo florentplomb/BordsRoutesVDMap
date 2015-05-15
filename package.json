@@ -1,10 +1,6 @@
 {
   "name": "appmap",
   "version": "0.0.1",
-<<<<<<< HEAD
-=======
-
->>>>>>> 306f3596aceff2261ef3af2a3e211fb42a9537a2
   "scripts": {
     "start": "node app.js"
   },

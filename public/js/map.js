@@ -1,8 +1,8 @@
 'use strict';
 
 var app = angular.module('app', ['leaflet-directive', 'angucomplete', ]);
-//var apiUrl = "http://localhost:3000/api";
-var apiUrl = "http://192.168.0.23:3000/api";
+var apiUrl = "http://localhost:3000/api";
+//var apiUrl = "http://127.0.0.1:27017/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
