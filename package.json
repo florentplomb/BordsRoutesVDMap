@@ -18,7 +18,8 @@
     "mongoose": "~3.8.20",
     "mongoose-geojson-schema": "0.0.2",
     "morgan": "~1.5.0",
-    "serve-favicon": "~2.2.0"
+    "serve-favicon": "~2.2.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
