@@ -9,7 +9,7 @@ var config = {
       name: 'appmap'
     },
     port: 3000,
-    db: 'mongodb://localhost/appmap-development'
+    db: process.env.MONGOLAB_URI || 'mongodb://localhost/appmap-development'
   },
 
   test: {
@@ -27,7 +27,7 @@ var config = {
       name: 'appmap'
     },
     port: 3000,
-    db: 'mongodb://localhost/appmap-production'
+    db: process.env.MONGOLAB_URI || 'mongodb://localhost/appmap-production'
   }
 };
 
