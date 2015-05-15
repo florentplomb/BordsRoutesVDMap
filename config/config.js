@@ -4,12 +4,13 @@ var path = require('path'),
 
 var config = {
   development: {
-    root: rootPath,
+     root: rootPath,
     app: {
       name: 'appmap'
     },
-    port: 3000,
-    db: process.env.MONGOLAB_URI || 'mongodb://localhost/appmap-development'
+    port: process.env.PORT,
+    db: process.env.MONGODB_CON_STRING
+  
   },
 
   test: {
