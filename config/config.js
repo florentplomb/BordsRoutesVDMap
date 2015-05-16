@@ -8,7 +8,7 @@ var config = {
     app: {
       name: 'appmap'
     },
-    port: 27017,
+    port: process.env['PORT'] || 8080,
     db: 'mongodb://127.0.0.1/appmap-development'
     // port: 3000,
     // db: 'mongodb://localhost/appmap-development'
@@ -28,7 +28,7 @@ var config = {
     app: {
       name: 'appmap'
     },
-    port: process.env['PORT'] || 8080;
+        port: process.env['PORT'] || 8080,
     db: 'mongodb://127.0.0.1/appmap-development'
   }
 };

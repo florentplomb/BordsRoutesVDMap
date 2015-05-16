@@ -50,19 +50,23 @@
           <leaflet    geojson="geojson" layers="map.layers"  center="map.center"   height='100%'>
           </leaflet>
       </div>
+<div id="work">
+            <p>         /!\ Work in progress /!\ </p>
+
+        </div>
 
       <div id="searchCommunes">
 
 
         <div>
-            <angucomplete id="ex1" placeholder="Indiqué le nom d'une commune" pause="100" selectedobject="selectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
+            <angucomplete id="ex1" placeholder="IndiquÃ© le nom d'une commune" pause="100" selectedobject="selectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
         </div>
         <div class="" ng-show="selectcommunesName">
             You selected <span class="bold-span">{{selectcommunesName.originalObject.NAME}}</span>
         </div>
 
          <div>
-            <angucomplete id="ex2" placeholder="Indiqué le nom d'une fleur" pause="100" selectedobject="selectespecesName" localdata="especesName" searchfields="espece" titlefield="espece" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
+            <angucomplete id="ex2" placeholder="IndiquÃ© le nom d'une fleur" pause="100" selectedobject="selectespecesName" localdata="especesName" searchfields="espece" titlefield="espece" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
         </div>
         <div class="" ng-show="selectespecesName">
             You selected <span class="bold-span">{{selectespecesName.originalObject.espece}}</span>
