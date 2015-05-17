@@ -7,6 +7,9 @@ body {
   height: 100%;
   position: relative;
 }
+img {
+  vertical-align: bottom;
+}
 #searchCommunes {
   position: absolute;
   top: 10%;
@@ -17,10 +20,19 @@ body {
   position: absolute;
   top: 1%;
   right: 40%;
-  color: #ffffff;
   background: red;
+  color: #ffffff;
   border: solid 1px;
   padding: 1em;
+}
+#info {
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  background: #ffffff;
+  border: solid 1px;
+  padding: 1em;
+  height: 100%;
 }
 #infoCommunes {
   position: absolute;

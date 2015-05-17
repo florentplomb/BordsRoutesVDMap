@@ -1,9 +1,9 @@
 'use strict';
 
 var app = angular.module('app', ['leaflet-directive', 'angucomplete', ]);
-//var apiUrl = "http://localhost:3000/api";
+var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
-var apiUrl = "http://geofleurs.herokuapp.com/api";
+//var apiUrl = "http://geofleurs.herokuapp.com/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
@@ -22,7 +22,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
   };
 
 
-
+  $scope.infoZone ={};
   $scope.layers = {};
   $scope.geojson = {};
   $scope.geojson.data = [];
@@ -181,14 +181,14 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
         onEachFeature: function(feature, layer) {
           if (feature.properties.flores) {
 
-            // var pop = "<button type="'button'" class="'btn btn-default'" aria-label="'Left Align'"><span class="'glyphicon glyphicon-align-left'" aria-hidden="'true'"></span></button>";
 
-            var pop = "<div>" + feature.properties.flores[0].espece + "</div> <div>commune" +
-            feature.properties.COMMUNE +
-            "</div> <div> ID: " + feature.properties.ID_MAPINFO + " </div>"+
-            "<img src='/img/flower2.png' alt='Flower'  width='32' height='32' />"+
-            "<div> <button type='button' class='btn btn-default'><span class='glyphicon glyphicon-align-left' aria-hidden='true'></span> </button> </div> ";
-            layer.bindPopup(pop);
+             layer.on('click', function (e) {
+            $scope.infoZone.commune = feature.properties.COMMUNE;
+           $scope.infoZone.fleurs = feature.properties.flores;
+
+        //or
+
+    });
           };
 
 
