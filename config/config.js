@@ -23,7 +23,7 @@ var config = {
   //   db: 'mongodb://127.0.0.1/appmap-development'
     // port: 3000,
     // db: 'mongodb://localhost/appmap-development'
-  },
+  //},
 
   test: {
     root: rootPath,
