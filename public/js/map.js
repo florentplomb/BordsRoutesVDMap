@@ -1,9 +1,9 @@
 'use strict';
 
 var app = angular.module('app', ['leaflet-directive', 'angucomplete', ]);
-//var apiUrl = "http://localhost:3000/api";
+var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
-var apiUrl = "http://geofleurs.herokuapp.com/api";
+//var apiUrl = "http://geofleurs.herokuapp.com/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
@@ -58,10 +58,9 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
     }
   }
-   $scope.$on("leafletDirectiveGeoJson.click", function(ev, leafletPayload) {
-               console.log("click", ev, leafletPayload);
-            });
-
+  $scope.$on("leafletDirectiveGeoJson.click", function(ev, leafletPayload) {
+    console.log("click", ev, leafletPayload);
+  });
 
 
 
@@ -168,25 +167,37 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
     // console.log(zonesFiltree);
 
 
-    $scope.geojson.data = {
-      "type": "FeatureCollection",
-      "features": zones
-    };
+    // $scope.geojson.data = {
+    //   "type": "FeatureCollection",
+    //   "features": zones
+    // };
 
-    // leafletData.getMap().then(function(map) {
+    leafletData.getMap().then(function(map) {
 
-    //   var layerZone = L.geoJson(zonesTalus, {
-    //     style: function(feature) {
-    //       return feature.properties.style;
-    //     },
-    //     onEachFeature: function(feature, layer) {
-    //       layer.bindPopup(feature.properties.COMMUNE + " Id: " + feature.properties.ID_MAPINFO);
-    //     }
-    //   })
+      var layerZone = L.geoJson(zonesTalus, {
+        style: function(feature) {
+          return feature.properties.style;
+        },
+        onEachFeature: function(feature, layer) {
+          if (feature.properties.flores) {
 
-    //   map.addLayer(layerZone);
+            // var pop = "<button type="'button'" class="'btn btn-default'" aria-label="'Left Align'"><span class="'glyphicon glyphicon-align-left'" aria-hidden="'true'"></span></button>";
 
-    // });
+            var pop = "<div>" + feature.properties.flores[0].espece + "</div> <div>commune" +
+            feature.properties.COMMUNE +
+            "</div> <div> ID: " + feature.properties.ID_MAPINFO + " </div>"+
+            "<img src='/img/flower2.png' alt='Flower'  width='32' height='32' />"+
+            "<div> <button type='button' class='btn btn-default'><span class='glyphicon glyphicon-align-left' aria-hidden='true'></span> </button> </div> ";
+            layer.bindPopup(pop);
+          };
+
+
+        }
+      })
+
+      map.addLayer(layerZone);
+
+    });
   }
 
   ZonesService.get(callback);
