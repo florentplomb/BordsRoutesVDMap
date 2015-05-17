@@ -3,13 +3,24 @@ var path = require('path'),
     env = process.env.NODE_ENV || 'development';
 
 var config = {
-  development: {
+    development: {
     root: rootPath,
     app: {
       name: 'appmap'
     },
-    port: process.env['PORT'] || 8080,
-    db: 'mongodb://127.0.0.1/appmap-development'
+    port: process.env.PORT,
+    db: process.env.MONGODB_CON_STRING
+    // port: 3000,
+    // db: 'mongodb://localhost/appmap-development'
+  },
+  //gandi
+  // development: {
+  //   root: rootPath,
+  //   app: {
+  //     name: 'appmap'
+  //   },
+  //   port: process.env['PORT'] || 8080,
+  //   db: 'mongodb://127.0.0.1/appmap-development'
     // port: 3000,
     // db: 'mongodb://localhost/appmap-development'
   },
