@@ -26,6 +26,9 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
   $scope.layers = {};
   $scope.geojson = {};
   $scope.geojson.data = [];
+  $scope.events = {};
+
+
 
   $scope.communesName = [];
   $scope.especesName = [];
@@ -55,6 +58,11 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
     }
   }
+   $scope.$on("leafletDirectiveGeoJson.click", function(ev, leafletPayload) {
+               console.log("click", ev, leafletPayload);
+            });
+
+
 
 
   // Center map on commune selected
@@ -88,8 +96,8 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
       var selecFleur = $scope.selectespecesName.originalObject.espece
       var zonesFiltree = $filter('filter')($scope.zones, function(zones) {
-      var tabFleure = zones.properties.flores;
-      var validate = false;
+        var tabFleure = zones.properties.flores;
+        var validate = false;
 
         angular.forEach(tabFleure, function(item, key) {
           if (item.espece == selecFleur) {
