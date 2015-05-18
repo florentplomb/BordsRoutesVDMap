@@ -14,6 +14,10 @@ router.route('/')
   .get(function(req, res, next) {
     Zone.find()
       .populate("properties.flores")
+      .populate({
+        path: 'properties.communes',
+        select: 'properties.NAME -_id',
+      })
       .exec(function(err, zones) {
         if (err) return next(err);
 
@@ -67,7 +71,7 @@ router.route('/populateFleures')
                 }
               })
             })
-            return res.status(200).send("Fleur ajouté au talus ok"+cpt+"Enregistrements");
+            return res.status(200).send("Fleur ajouté au talus ok" + cpt + "Enregistrements");
 
           })
       })
@@ -91,20 +95,20 @@ router.route('/populateCommunes')
               console.log(communes);
               if (err) return next(err);
               communes.forEach(function(commune) {
-              //  if (_.contains(zone.properties.communes, commune.id)) {
-                  zone.properties.communes.push(commune.id);
-                  zone.save(function(err, zoneSaved) {
-                    cpt++
-                    if (err) return next(err)
-                  });
-              //  }
+                //  if (_.contains(zone.properties.communes, commune.id)) {
+                zone.properties.communes.push(commune.id);
+                zone.save(function(err, zoneSaved) {
+                  cpt++
+                  if (err) return next(err)
+                });
+                //  }
               });
 
             });
 
 
         });
-         return res.status(200).send("commune ajouté au talus ok -"+cpt+"Enregistrements");
+        return res.status(200).send("commune ajouté au talus ok -" + cpt + "Enregistrements");
       });
 
   });
