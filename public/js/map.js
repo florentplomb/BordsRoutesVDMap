@@ -21,24 +21,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
     zoom: 14
   };
 
-
-  $scope.infoZone ={};
-  $scope.layers = {};
-  $scope.geojson = {};
-  $scope.geojson.data = [];
-  $scope.events = {};
-
-
-
-  $scope.communesName = [];
-  $scope.especesName = [];
-  $scope.map = {};
-  $scope.map.markers = [];
-  $scope.map.center = {};
-  $scope.map.center = yverdon;
-
-
-  $scope.map.layers = {
+  var baseLayer = {
     baselayers: {
 
       osm: {
@@ -58,6 +41,25 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
     }
   }
+  var bLayerId = [];
+  $scope.infoZone = {};
+  $scope.layers = {};
+  $scope.geojson = {};
+  $scope.geojson.data = [];
+  $scope.events = {};
+  var controlLayer = null;
+
+
+
+  $scope.communesName = [];
+  $scope.especesName = [];
+  $scope.map = {};
+  $scope.map.markers = [];
+  $scope.map.center = {};
+  $scope.map.center = yverdon;
+
+
+  $scope.map.layers = baseLayer;
   $scope.$on("leafletDirectiveGeoJson.click", function(ev, leafletPayload) {
     console.log("click", ev, leafletPayload);
   });
@@ -98,24 +100,51 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
         var tabFleure = zones.properties.flores;
         var validate = false;
 
+        // eviter les doublons
         angular.forEach(tabFleure, function(item, key) {
-          if (item.espece == selecFleur) {
-            validate = true;
-          };
-        })
-
+            if (item.espece == selecFleur) {
+              validate = true;
+            };
+          })
+          //condition pour le filtre
         return validate;
       });
 
-      console.log(zonesFiltree);
+      leafletData.getMap().then(function(map) {
 
-      $scope.geojson.data = {
-        "type": "FeatureCollection",
-        "features": zonesFiltree
-      };
+        //   if (map.hasLayer(leafletGeoJSON)) {
+        //     consol.log(leafletGeoJSON);
+        //   };
+        // });
 
 
-    };
+        var layerZone = L.geoJson(zonesFiltree, {
+          style: function(feature) {
+            return feature.properties.style;
+          },
+          onEachFeature: function(feature, layer) {
+            if (feature.properties.flores) {
+
+
+              layer.on('click', function(e) {
+                $scope.infoZone.commune = feature.properties.COMMUNE;
+                $scope.infoZone.fleurs = feature.properties.flores;
+
+                //or
+
+              });
+            };
+          }
+
+        })
+        map.eachLayer(function(layer) {
+          if (!_.contains(bLayerId, layer._leaflet_id)) {
+            map.removeLayer(layer);
+          }
+        });
+        map.addLayer(layerZone);
+      });
+    }
   });
 
 
@@ -162,42 +191,9 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
       $scope.error = error;
     }
     $scope.zones = zones;
-    zonesTalus = zones;
-
-    // console.log(zonesFiltree);
+    addAllZone(zones);
 
 
-    // $scope.geojson.data = {
-    //   "type": "FeatureCollection",
-    //   "features": zones
-    // };
-
-    leafletData.getMap().then(function(map) {
-
-      var layerZone = L.geoJson(zonesTalus, {
-        style: function(feature) {
-          return feature.properties.style;
-        },
-        onEachFeature: function(feature, layer) {
-          if (feature.properties.flores) {
-
-
-             layer.on('click', function (e) {
-            $scope.infoZone.commune = feature.properties.COMMUNE;
-           $scope.infoZone.fleurs = feature.properties.flores;
-
-        //or
-
-    });
-          };
-
-
-        }
-      })
-
-      map.addLayer(layerZone);
-
-    });
   }
 
   ZonesService.get(callback);
@@ -208,7 +204,32 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
   //   tileLayer: mapboxTileLayer
   // };
 
+  $scope.restoreZones = function() {
 
+
+  };
+
+  function addAllZone(layerGeoJson) {
+    leafletData.getMap().then(function(map) {
+      map.eachLayer(function(layer) {
+        bLayerId.push(layer._leaflet_id);
+      });
+      var layerZone = L.geoJson(layerGeoJson, {
+        style: function(feature) {
+          return feature.properties.style;
+        },
+        onEachFeature: function(feature, layer) {
+          if (feature.properties.flores) {
+            layer.on('click', function(e) {
+              $scope.infoZone.commune = feature.properties.COMMUNE;
+              $scope.infoZone.fleurs = feature.properties.flores;
+            });
+          };
+        }
+      })
+      map.addLayer(layerZone);
+    });
+  }
 });
 
 app.factory("FloreService", function($http) {

@@ -16,6 +16,8 @@
     <script src="components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
     <script src="components/leaflet.draw/dist/leaflet.draw.js"></script>
     <script src="components/angular-leaflet-directive/dist/angular-leaflet-directive_dev_mapped.js"></script>
+    <script src="components/leaflet.activelayers/dist/leaflet.active-layers.min.js"></script>
+
 
     <!--  <script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script> -->
     <script src="components/leaflet-plugins/layer/tile/Google.js"></script>
@@ -69,15 +71,15 @@
         <div>
             <angucomplete id="ex1" placeholder="IndiquÃ© le nom d'une commune" pause="100" selectedobject="selectcommunesName" localdata="communesName" searchfields="NAME" titlefield="NAME" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
         </div>
-        <div class="" ng-show="selectcommunesName">
+        <div  ng-show="selectcommunesName">
             You selected <span class="bold-span">{{selectcommunesName.originalObject.NAME}}</span>
         </div>
 
-        <div>
+        <div ng-hide="selectespecesName">
             <angucomplete id="ex2" placeholder="IndiquÃ© le nom d'une fleur" pause="100" selectedobject="selectespecesName" localdata="especesName" searchfields="espece" titlefield="espece" minlength="2" inputclass="form-control form-control-small" matchclass="highlight" />
         </div>
-        <div class="" ng-show="selectespecesName">
-            You selected <span class="bold-span">{{selectespecesName.originalObject.espece}}</span>
+        <div  ng-click="restoreZones()"  ng-show="selectespecesName">
+            <button type="button" class="btn btn-warning ">{{selectespecesName.originalObject.espece}} <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
         </div>
 
     </div>
