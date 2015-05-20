@@ -1,56 +1,30 @@
 'use strict';
 
 var app = angular.module('app', ['leaflet-directive', 'angucomplete-alt', ]);
-// var apiUrl = "http://localhost:3000/api";
+var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
-var apiUrl = "http://geofleurs.herokuapp.com/api";
+//var apiUrl = "http://geofleurs.herokuapp.com/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
 
-app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, CommunesService, FloreService) {
+app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, CommunesService, $http, FloreService) {
 
   var zonesTalus = [];
-  $scope.zones = {};
 
+  $scope.map = {};
   var yverdon = {
     lat: 46.841759385352,
     lng: 6.64475440979004,
     zoom: 14
   };
 
-  var baseLayer = {
-    baselayers: {
-
-      osm: {
-        name: 'OpenStreetMap',
-        url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        type: 'xyz'
-      },
-      cloudmade: {
-        name: 'Cloudmade Tourist',
-        type: 'xyz',
-        url: 'http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png',
-        layerParams: {
-          key: '007b9471b4c74da4a6ec7ff43552b16f',
-          styleId: 7
-        }
-      }
-
-    }
-  }
+  $scope.layers = {};
   var bLayerId = [];
   $scope.infoZone = {};
-  $scope.layers = {};
-  $scope.geojson = {};
-  $scope.geojson.data = [];
   $scope.events = {};
-  var controlLayer = null;
-
-
-
   $scope.communesName = [];
   $scope.especesName = [];
   $scope.map = {};
@@ -58,9 +32,43 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
   $scope.map.center = {};
   $scope.map.center = yverdon;
 
+  // url MapBox
+  var mapboxTileLayer = "http://api.tiles.mapbox.com/v4/" + "fplomb.kajpd2d6";
+  mapboxTileLayer = mapboxTileLayer + "/{z}/{x}/{y}.png?access_token=" + "pk.eyJ1IjoiZnBsb21iIiwiYSI6ImJwRUF2ZlkifQ.OIuXY-qgnEBzcnYwXg8imw";
 
-  $scope.map.layers = baseLayer;
-
+  var baselayers = {
+    baselayers: {
+      mapbox_light: {
+        name: 'Mapbox Light',
+        url: mapboxTileLayer,
+        type: 'xyz',
+        layerOptions: {
+          apikey: 'pk.eyJ1IjoiYnVmYW51dm9scyIsImEiOiJLSURpX0pnIn0.2_9NrLz1U9bpwMQBhVk97Q',
+          mapid: 'fplomb.kajpd2d6'
+        }
+      },
+      osm: {
+        name: 'OpenStreetMap',
+        url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        type: 'xyz'
+      },
+      googleTerrain: {
+        name: 'Google Terrain',
+        layerType: 'TERRAIN',
+        type: 'google'
+      },
+      googleHybrid: {
+        name: 'Google Hybrid',
+        layerType: 'HYBRID',
+        type: 'google'
+      },
+      googleRoadmap: {
+        name: 'Google Streets',
+        layerType: 'ROADMAP',
+        type: 'google'
+      }
+    }
+  }
 
 
   // Center map on commune selected
@@ -87,28 +95,34 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
     };
   });
 
+  // Filtrer flower
   $scope.$watch(function() {
     return $scope.selectespecesName;
   }, function(newValue, oldValue) {
     if ($scope.selectespecesName) {
 
-      var selecFleur = $scope.selectespecesName.originalObject.espece
-      var zonesFiltree = $filter('filter')($scope.zones, function(zones) {
-        var tabFleure = zones.properties.flores;
-        var validate = false;
+      var selecFleur = $scope.selectespecesName.originalObject.espece;
 
-        // eviter les doublons
-        angular.forEach(tabFleure, function(item, key) {
-            if (item.espece == selecFleur) {
-              validate = true;
-            };
-          })
-          //condition pour le filtre
-        return validate;
+      leafletData.getMap().then(function(map) {
+
+        map.eachLayer(function(layer) {
+          if (layer.feature) {
+            if (layer.feature.properties.flores) {
+              if (layer.feature.properties.flores) {
+                var tabFleur = layer.feature.properties.flores
+                angular.forEach(tabFleur, function(item, key) {
+                  if (item.espece == selecFleur) {
+                    layer.setStyle({
+                      color: 'red'
+                    });
+                  };
+                })
+              };
+            }
+          };
+        });
+
       });
-      addSpecificZones(zonesFiltree);
-
-
     }
   });
 
@@ -163,21 +177,44 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
   ZonesService.get(callback);
 
-  // var mapboxTileLayer = 'http://api.tiles.mapbox.com/v4/' + 'cleliapanchaud.kajpf86n';
-  // mapboxTileLayer = mapboxTileLayer + '/{z}/{x}/{y}.png?access_token=' + 'pk.eyJ1IjoiY2xlbGlhcGFuY2hhdWQiLCJhIjoiM2hMOEVXYyJ9.olp7FrLzmzSadE07IY8OMQ';
-  // $scope.mapDefaults = {
-  //   tileLayer: mapboxTileLayer
-  // };
-
   $scope.restoreZones = function() {
 
-    addSpecificZones($scope.zones);
-    $scope.selectespecesName = "";
+    leafletData.getMap().then(function(map) {
+
+
+      $scope.selectespecesName = "";
+      map.eachLayer(function(layer) {
+        if (layer.feature) {
+          if (layer.feature.properties.flores) {
+            layer.setStyle({
+              color: 'blue'
+            });
+          }
+        }
+      });
+
+    });
 
   };
 
   function addSpecificZones(layerGeoJson) {
     leafletData.getMap().then(function(map) {
+
+      map.eachLayer(function(layer) {
+
+        if (layer.feature.properties.flores) {
+          if (layer.feature.properties.flores) {
+            var tabFleur = layer.feature.properties.flores
+            angular.forEach(tabFleur, function(item, key) {
+              if (item.espece == selecFleur) {
+                validate = true;
+              };
+            })
+          };
+        }
+
+      });
+
 
       var layerZone = addLayerGeojson(layerGeoJson);
 
@@ -194,18 +231,22 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
   function addStartZones(layerGeoJson) {
     leafletData.getMap().then(function(map) {
 
+
       map.eachLayer(function(layer) {
         bLayerId.push(layer._leaflet_id);
       });
       var layerZone = addLayerGeojson(layerGeoJson);
       map.addLayer(layerZone);
-    });
 
-           var highlight = {
-          'color': '#333333',
-          'weight': 12,
-          'opacity': 1
-        };
+      $scope.layers = baselayers;
+
+            L.mapbox.accessToken = 'pk.eyJ1IjoiZnBsb21iIiwiYSI6ImJwRUF2ZlkifQ.OIuXY-qgnEBzcnYwXg8imw';
+      var map = L.mapbox.map('map')
+        .on('ready', function() {
+          new L.Control.MiniMap(L.mapbox.tileLayer('map'))
+            .addTo(map);
+        });
+    });
 
 
   }
@@ -221,20 +262,15 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
       onEachFeature: function(feature, layer) {
 
         if (feature.properties.flores) {
+
           layer.on('click', function(e) {
-
-
             $scope.infoZone.commune = feature.properties.communes;
             $scope.infoZone.fleurs = feature.properties.flores;
-
-
-
-
           });
         } else {
           layer.on('click', function(e) {
 
-             $scope.infoZone.commune = feature.properties.communes;
+            $scope.infoZone.commune = feature.properties.communes;
             $scope.infoZone.fleurs = [{
               espece: "Aucune fleur répértoriée"
             }];
