@@ -104,7 +104,7 @@ router.route('/center')
             var infoCommunes = {};
 
             infoCommunes.center = center;
-            infoCommunes.distTot = distTot;
+            infoCommunes.distTot = distTot.toFixed(1);
             infoCommunes.nbrZones = nbrZones
 
             return res.status(200).json(infoCommunes)
