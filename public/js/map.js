@@ -19,7 +19,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
   var yverdon = {
     lat: 46.841759385352,
     lng: 6.64475440979004,
-    zoom: 14
+    zoom: 10
   };
   var defaultStyle = {
     color: "#c5128a", // #02a6a6 //#ff7e61 //#d87c50 //#256aa6
