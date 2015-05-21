@@ -77,6 +77,37 @@ router.route('/populateFleures')
       })
   });
 
+
+router.route('/unPopulateFleures')
+  .post(function(req, res, next) {
+    var cpt = 0;
+    Zone.find()
+      .exec(function(err, zones) {
+        zones.forEach(function(zone) {
+          if (zone.properties.flores) {
+            //             function unique(arr) {
+            //     return _.uniq(arr, JSON.stringify).length === arr.length;
+            // }
+
+            var arr2 = _.uniq(zone.properties.flores, function(item) {
+              return JSON.stringify(item);
+            });
+
+            zone.properties.flores = arr2;
+            zone.save(function(err, zoneSaved) {
+              if (err) return next(err)
+            });
+
+          };
+        })
+        return res.status(200).send("UnpopulateOK");
+
+
+
+      })
+  });
+
+
 router.route('/populateCommunes')
   .post(function(req, res, next) {
     var cpt = 0;

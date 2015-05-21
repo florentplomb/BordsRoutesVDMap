@@ -1,9 +1,9 @@
 'use strict';
 
 var app = angular.module('app', ['leaflet-directive', 'angucomplete-alt', ]);
-//var apiUrl = "http://localhost:3000/api";
+var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
-var apiUrl = "http://fleurs-vd.herokuapp.com/api";
+// var apiUrl = "http://fleurs-vd.herokuapp.com/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
@@ -291,7 +291,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
         });
 
-        if (feature.properties.flores) {
+        if (feature.properties.flores && feature.properties.flores.length > 0) {
 
           layer.on('click', function(e) {
             $scope.infoZone.commune = feature.properties.communes;
