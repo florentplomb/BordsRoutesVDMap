@@ -80,6 +80,9 @@ li {
   list-style: circle;
   color: #f8265f;
 }
+.colorLink {
+  color: #f8265f;
+}
 #searchCommunes {
   position: absolute;
   top: 10%;

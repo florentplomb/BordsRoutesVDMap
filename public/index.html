@@ -94,7 +94,7 @@
 
     <div class="titre margeTop"><img src='/img/flower2.png' alt='Flower'  width='25' height='25'/> Espèce(s) </div>
     <div ng-repeat="fleur in infoZone.fleurs">
-    <p><div id="allFleurs" class="listeFleurs"><li>{{fleur.espece}}</li><div></p>
+    <p><div id="allFleurs" class="listeFleurs"><li><a class="colorLink" ng-href="http://www.google.fr/search?q={{fleur.espece}}">{{fleur.espece}}</a></li><div></p>
     </div>
   </div>
 </div>
