@@ -136,8 +136,6 @@ router.route('/info')
 //               });
 
 //             });
-
-
 //         });
 //         return res.status(200).send("commune ajouté au talus ok -" + cpt + "Enregistrements");
 //       });

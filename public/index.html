@@ -34,7 +34,7 @@
 <link rel="stylesheet" href="components/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="components/font-awesome/css/font-awesome.min.css">
 
-<link href="css/style.css" rel="stylesheet"/>
+<link href="css/map.css" rel="stylesheet"/>
 
 
 
@@ -94,7 +94,7 @@
 
     <div class="titre margeTop"><img src='/img/flower2.png' alt='Flower'  width='25' height='25'/> Espèce(s) </div>
     <div ng-repeat="fleur in infoZone.fleurs">
-    <p><div id="allFleurs" class="listeFleurs"><li><a class="colorLink" ng-href="http://www.google.fr/search?q={{fleur.espece}}">{{fleur.espece}}</a></li><div></p>
+    <p><div id="allFleurs" class="listeFleurs"><li ><a ng-hide="fleur.espece == 'Aucune fleur répértoriée'" TARGET="_blank" class="colorLink" ng-href="http://www.google.fr/search?q={{fleur.espece}}">{{fleur.espece}}</a> <p ng-show="fleur.espece == 'Aucune fleur répértoriée'">{{fleur.espece}}</p>
     </div>
   </div>
 </div>

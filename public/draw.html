@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app="draw">
+<head>
+
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+	<title></title>
+
+	<!-- add the stylesheets here -->
+
+	<script src="components/angular/angular.min.js"></script>
+
+	<script src="components/jquery/dist/jquery.min.js"></script>
+	<script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<script src="components/leaflet/dist/leaflet.js"></script>
+	<script src="components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
+	<script src="components/leaflet.draw/dist/leaflet.draw.js"></script>
+
+	<script src="components/leaflet.activelayers/dist/leaflet.active-layers.min.js"></script>
+
+
+	<script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
+	<script src="components/leaflet-plugins/layer/tile/Google.js"></script>
+
+	<script src="components/angucomplete-alt/dist/angucomplete-alt.min.js"></script>
+	<script src="components/ngDialog/js/ngDialog.js"></script>
+	<script src="components/underscore/underscore.js"></script>
+
+
+	<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="components/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="components/angucomplete-alt/angucomplete-alt.css"/>
+	<link rel="stylesheet" href="components/leaflet.draw/dist/leaflet.draw.css"/>
+	<link rel="stylesheet" href="components/leaflet/dist/leaflet.css"/>
+	<link rel="stylesheet" href="components/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="components/ngDialog/css/ngDialog.css">
+	<link rel="stylesheet" href="components/ngDialog/css/ngDialog-theme-plain.min.css">
+	<link rel="stylesheet" href="components/ngDialog/css/ngDialog-theme-default.css">
+
+
+	<link href="css/draw.css" rel="stylesheet"/>
+
+
+
+
+	<!-- your app's js -->
+
+	<script src="js/draw.js"></script>
+	<script>
+</script>
+
+<script type="text/ng-template" id="pop.html">
+	<div class="formu">
+		<form>
+			<div class="form-group">
+				<div>
+
+					<ul ng-controller="TagsController" id="tag" class="nav item">
+						<label for="exampleInputEmail1">Flore</label>
+						<div>  <angucomplete-alt id="ex2" placeholder="Indiquez le nom d'une fleur" pause="100" selected-object="selectFlores" local-data="especesName" search-fields="espece" title-field="espece" minlength="1" input-class="form-control form-control-small" match-class="highlight" />	</div>
+
+						<button ng-disabled="!selectFlores"  class="button button-block button-outline button-positive" ng-click="addTag()">Add Tag</button>
+						<li  ng-repeat="tag in tags.data track by $index | limitTo: 3">
+							<span>{{tag}}</span>
+						</li>
+					</ul>
+				</div>
+				<label for="exampleInputEmail1">Commune</label>
+				<div>
+
+					<ul  id="tag" class="nav item">
+
+						<li ng-repeat="commune in  communeName">
+							<span>{{commune.properties.NAME}}</span>
+						</li>
+					</ul>
+				</div>
+
+				<label for="exampleInputEmail1">Fiabilité</label>
+				<input type="text" class="form-control" ng-model="newZone.properties.fiabilite" id="exampleInputEmail1" placeholder="Enter fiabilite">
+				<label for="exampleInputEmail1">Type</label>
+				<input type="text" class="form-control" ng-model="newZone.properties.type" id="exampleInputEmail1" placeholder="Enter email">
+				<label for="exampleInputEmail1">Description</label>
+				<input type="text" class="form-control" ng-model="newZone.properties.desc" id="exampleInputEmail1" placeholder="Enter email">
+				<label for="exampleInputEmail1">Entretien</label>
+				<input type="text" class="form-control" ng-model="newZone.properties.entretiens" id="exampleInputEmail1" placeholder="Enter email">
+			</div>
+			<button type="submit" class="btn btn-default" ng-click="storeZone()">Submit</button>
+		</form>
+	</div>
+</script>
+
+</head>
+
+<body ng-controller="DrawCtrl">
+
+	<div id="map-wrapper">
+
+		<div id="map">
+
+
+			<leaflet  event-broadcast="events" controls="controls" defaults="mapDefaults"  layers="layers"  center="map.center"   height='100%'>
+			</leaflet>
+		</div>
+
+
+
+
+
+	</body>
+	</html>

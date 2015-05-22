@@ -1,9 +1,9 @@
 'use strict';
 
 var app = angular.module('app', ['leaflet-directive', 'angucomplete-alt', ]);
-//var apiUrl = "http://localhost:3000/api";
+var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
- var apiUrl = "http://fleurs-vd.herokuapp.com/api";
+//var apiUrl = "http://fleurs-vd.herokuapp.com/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
@@ -15,8 +15,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
 
   var zonesTalus = [];
-  var bLayerId = [];
-  var yverdon = {
+   var yverdon = {
     lat: 46.841759385352,
     lng: 6.64475440979004,
     zoom: 10
@@ -182,7 +181,6 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
     })
 
 
-
   });
 
   // Display commune
@@ -253,9 +251,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
     leafletData.getMap().then(function(map) {
 
 
-      map.eachLayer(function(layer) {
-        bLayerId.push(layer._leaflet_id);
-      });
+
 
       var callback = function(error, layerZone) {
         if (error) {

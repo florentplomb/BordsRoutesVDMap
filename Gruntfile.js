@@ -20,7 +20,8 @@ module.exports = function (grunt) {
     less: {
       dist: {
         files: {
-          'public/css/style.css': 'public/css/style.less'
+          'public/css/map.css': 'public/css/map.less',
+          'public/css/draw.css': 'public/css/draw.less'
         }
       }
     },
