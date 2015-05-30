@@ -8,25 +8,21 @@
 <!-- add the stylesheets here -->
 
 <script src="components/angular/angular.min.js"></script>
-
 <script src="components/jquery/dist/jquery.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
-
 <script src="components/leaflet/dist/leaflet.js"></script>
 <script src="components/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
 <script src="components/leaflet.draw/dist/leaflet.draw.js"></script>
-
 <script src="components/leaflet.activelayers/dist/leaflet.active-layers.min.js"></script>
-
-
 <script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
 <script src="components/leaflet-plugins/layer/tile/Google.js"></script>
-
 <script src="components/angucomplete-alt/dist/angucomplete-alt.min.js"></script>
-
 <script src="components/underscore/underscore.js"></script>
+<script src="components/ngDialog/js/ngDialog.js"></script>
 
-
+<link rel="stylesheet" href="components/ngDialog/css/ngDialog.css">
+<link rel="stylesheet" href="components/ngDialog/css/ngDialog-theme-plain.min.css">
+<link rel="stylesheet" href="components/ngDialog/css/ngDialog-theme-default.css">
 <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="components/font-awesome/css/font-awesome.min.css"/>
 <link rel="stylesheet" href="components/angucomplete-alt/angucomplete-alt.css"/>
@@ -53,21 +49,29 @@
 
 </script>
 
+</script>
+
+<script type="text/ng-template" id="pop.html">
+  <div id="formu">
+
+            <h4>Bienvenue sur cartographie des bord de routes du canton de Vaud </h4>
+            <div>Cette application présente les données issue de l'inventaire des bord de route vaudoise entamé par Pro Natura en 1996</div>
 
 
 
+     <button type="submit" class="btn btn-default" ng-click="storeZone()">Submit</button>
+
+
+  </div>
+</script>
 </head>
-
 <body ng-controller="MapCtrl">
-
 <div id="map-wrapper">
-
 <div id="map">
 
   <leaflet  event-broadcast="events" defaults="mapDefaults"   layers="layers"  center="map.center"   height='100%'>
   </leaflet>
 </div>
-
  <div id="searchCommunes">
   <div>
     <angucomplete-alt id="ex1" placeholder="Indiquez le nom d'une commune" pause="100" selected-object="selectcommunesName" local-data="communesName" search-fields="NAME" title-field="NAME" minlength="1" input-class="form-control form-control-small" match-class="highlight" />
@@ -76,7 +80,7 @@
     <angucomplete-alt id="ex2" placeholder="Indiquez le nom d'une fleur" pause="100" selected-object="selectespecesName" local-data="especesName" search-fields="espece" title-field="espece" minlength="1" input-class="form-control form-control-small" match-class="highlight" clear-selected="true"/>
   </div>
   <div  ng-click="restoreZones()"  ng-show="selectespecesName">
-    <button type="button" class="btn btn-warning ">{{selectespecesName.originalObject.espece}} <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+    <button type="button" class="btn btn-warning ">{{nbrSelected}} {{selectespecesName.originalObject.espece}} <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
   </div>
 </div>
 <div id="infoCommunes" ng-show="selectcommunesName" >
@@ -86,7 +90,8 @@
   </div>
   <div id="info">
     <div class="titreInfo"> Informations   </div>
-    <div class="titre" ><img id="mapIcon" src='/img/loc.png' alt='Commune' width='26' height='26' align='top'/> Commune(s)
+    <div ng-show ="infoZone.id" class="dlPdf"><a TARGET="_blank"  ng-href="http://www.humagis.ch/~jomtalus/PDF/F{{infoZone.id}}.pdf">Download PDF</a> </div>
+    <div class="titre margeTop"  ><img id="mapIcon" src='/img/loc.png' alt='Commune' width='26' height='26' align='top'/> Commune(s)
     </div>
     <div id="LocCommunes" ng-repeat="commune in infoZone.commune"><li><i class="fa fa-map-marker"></i>
 </span>{{commune.properties.NAME}}</li></div>

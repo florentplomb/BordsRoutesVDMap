@@ -24,7 +24,51 @@ router.route('/')
         return res.status(200).json(zones)
       });
 
-  });
+  })
+  .post(function(req, res, next) {
+    if (!req.body.zone) return res.status(400).json({
+      message: 'bad request'
+    }).end();
+
+    var id = 0;
+    Zone.findOne().sort('-properties.ID_MAPINFO').exec(function(err, item) {
+      console.log(item.properties.ID_MAPINFO);
+      id = item.properties.ID_MAPINFO + 1;
+
+      if (id <= 0) {
+        return res.status(400).json({
+          message: 'error id <= 0'
+        }).end();
+      }
+      var geom = {};
+      var coordinates = [];
+      coordinates.push(req.body.zone.geometry.coordinates);
+       geom.type ="MultiLineString";
+       geom.coordinates = coordinates;
+
+      console.log(coordinates);
+
+      var newZone = new Zone();
+
+      newZone.properties = req.body.zone.properties;
+      newZone.properties.ID_MAPINFO = id;
+      newZone.geometry = geom;
+
+      newZone.type = "Feature";
+
+      console.log(newZone.geometry);
+
+      newZone.save(function(err, zoneSaved) {
+        if (err) return validationError(res, err);
+
+
+        return res.status(400).json(zoneSaved).end();
+
+
+      });
+    });
+  })
+
 router.route('/:id')
   .get(function(req, res, next) {
     Zone.findById(req.params.id)
@@ -48,6 +92,9 @@ router.route('/info')
       });
 
   });
+
+
+///// Script d'ajout de fleurs pour chaque zone ///////////
 
 // router.route('/populateFleures')
 //   .post(function(req, res, next) {
@@ -107,7 +154,7 @@ router.route('/info')
 //       })
 //   });
 
-
+///// Script d'ajout de commune pour chaque zone ///////////
 // router.route('/populateCommunes')
 //   .post(function(req, res, next) {
 //     var cpt = 0;

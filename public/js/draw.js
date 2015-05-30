@@ -1,17 +1,15 @@
 'use strict';
 
 var drawApp = angular.module('draw', ['leaflet-directive', 'angucomplete-alt', 'ngDialog']);
-var apiUrl = "http://localhost:3000/api";
+//var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
-//var apiUrl = "http://fleurs-vd.herokuapp.com/api";
+var apiUrl = "http://fleurs-vd.herokuapp.com/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
-
-drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, tags, FloreService,DrawService) {
-
+drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, tags, FloreService,DrawService,ZonesService) {
   var yverdon = {
     lat: 46.841759385352,
     lng: 6.64475440979004,
@@ -29,11 +27,17 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
   $scope.map.center = {};
   $scope.map.center = yverdon;
   $scope.controls = {};
-  $scope.controls.draw = {};
+  $scope.controls.draw = {
+
+    polyline: {
+          shapeOptions: {
+            color: 'red',
+            opacity : 1
+          },
+        }
+  };
   $scope.selectespecesName = "";
   $scope.newZone = {};
-
-
   // url MapBox
   var mapboxTileLayer = "http://api.tiles.mapbox.com/v4/" + "fplomb.685fc191";
   mapboxTileLayer = mapboxTileLayer + "/{z}/{x}/{y}.png?access_token=" + "pk.eyJ1IjoiZnBsb21iIiwiYSI6ImJwRUF2ZlkifQ.OIuXY-qgnEBzcnYwXg8imw";
@@ -63,32 +67,32 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
     }
   }
-
   $scope.layers = baselayers;
-
   FloreService.getEspece(function(error, especes) {
     if (error) {
       $scope.error = error;
     }
+// var tab = [];
+//     angular.forEach(especes, function(esp, key) {
 
-    // $scope.especesName = especes;
+//       if (!_.contains(tab, esp.espece)) {
+//         tab.push(esp.espece);
+//         $scope.especesName.push(esp);
+//       }
+
+//     })
+
     var tab = [];
     angular.forEach(especes, function(esp, key) {
-
       if (!_.contains(tab, esp.espece)) {
         tab.push(esp.espece);
         $scope.especesName.push(esp);
       }
-
     })
-
-
-
   });
-
-
   leafletData.getMap().then(function(map) {
     var drawnItems = $scope.controls.edit.featureGroup;
+
     map.on('draw:created', function(e) {
       var layer = e.layer;
       drawnItems.addLayer(layer);
@@ -98,8 +102,6 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
           if (error) {
             $scope.error = error;
           }
-
-
           $scope.communeName = [];
           angular.forEach(communeName, function(name, key) {
             $scope.communeName.push(name);
@@ -113,30 +115,24 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
     });
   });
 
-
    $scope.storeZone = function() {
     var newCom = [];
     angular.forEach($scope.communeName, function(com, key) {
             newCom.push(com._id);
           })
-
       var fleurs = [];
     angular.forEach(tags.data, function(fleur, key) {
             fleurs.push(fleur._id);
           })
-
     $scope.newZone.properties.communes = newCom;
-
-
     $scope.newZone.properties.flores = fleurs;
-
-   console.log($scope.newZone);
-
+     var cb = function(err, zoneSaved){
+      console.log("Saved : "+zoneSaved);
+     }
+     console.log($scope.newZone);
+    ZonesService.post(cb,$scope.newZone)
   }
-
 });
-
-
 
 
 drawApp.controller('TagsController', function($scope, $rootScope, tags, $log) {
@@ -150,10 +146,9 @@ drawApp.controller('TagsController', function($scope, $rootScope, tags, $log) {
   $scope.addTag = function(index) {
 
     tags.data.push(
-      $scope.selectFlores.originalObject.espece
+      $scope.selectFlores.originalObject
     );
     $scope.selectFlores = "";
-
   }
 });
 
@@ -161,6 +156,28 @@ drawApp.factory("tags", function() {
   var tags = {};
   tags.data = [];
   return tags;
+});
+
+drawApp.factory("ZonesService", function($http) {
+
+  var config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return {
+    post: function(callback, newZone) {
+      $http.post(apiUrl + "/zones", {
+        "zone" : newZone ,
+      }, config).success(function(data) {
+        var zone = data;
+        callback(null, zone);
+      }).error(function(error) {
+        callback(error);
+      });
+    }
+  };
 });
 
 drawApp.factory("FloreService", function($http) {
@@ -193,7 +210,7 @@ drawApp.factory("DrawService", function($http) {
   };
   return {
     postZone: function(callback, zone) {
-      $http.post("http://localhost:3000/draw/locZone", {
+      $http.post(apiUrl+"draw/locZone", {
         "zone": zone
       }, config).success(function(data) {
 

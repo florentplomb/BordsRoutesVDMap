@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('app', ['leaflet-directive', 'angucomplete-alt', ]);
+var app = angular.module('app', ['leaflet-directive', 'angucomplete-alt', 'ngDialog' ]);
 //var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
 var apiUrl = "http://fleurs-vd.herokuapp.com/api";
@@ -10,9 +10,7 @@ underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
 
-app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, CommunesService, $http, FloreService) {
-
-
+app.controller('MapCtrl', function($scope, $filter, ngDialog,leafletData, ZonesService, CommunesService, $http, FloreService) {
 
   var zonesTalus = [];
    var yverdon = {
@@ -32,6 +30,7 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
   };
   $scope.layers = {};
+  $scope.nbrSelected = {};
   $scope.map = {};
   $scope.infoZone = {};
   $scope.events = {};
@@ -41,11 +40,15 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
   $scope.map.markers = [];
   $scope.map.center = {};
   $scope.map.center = yverdon;
-
   // url MapBox
+
+    // ngDialog.open({
+    //         template: 'pop.html',
+    //         scope: $scope
+    //       });
+
   var mapboxTileLayer = "http://api.tiles.mapbox.com/v4/" + "fplomb.685fc191";
   mapboxTileLayer = mapboxTileLayer + "/{z}/{x}/{y}.png?access_token=" + "pk.eyJ1IjoiZnBsb21iIiwiYSI6ImJwRUF2ZlkifQ.OIuXY-qgnEBzcnYwXg8imw";
-
   var baselayers = {
     baselayers: {
      osm: {
@@ -72,35 +75,24 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
         layerType: 'ROADMAP',
         type: 'google'
       },
-
-
-
     }
   }
-
-
   // Center map on commune selected
   $scope.$watch(function() {
     return $scope.selectcommunesName;
   }, function(newValue, oldValue) {
     if ($scope.selectcommunesName) {
-
-
       CommunesService.getCenter(function(error, infoCommunes) {
         if (error) {
           $scope.error = error;
         }
-
         $scope.infoCommunes = infoCommunes
-
         $scope.map.center = {
           lng: infoCommunes.center.coordinates[0],
           lat: infoCommunes.center.coordinates[1],
           zoom: 14
         };
-
       }, $scope.selectcommunesName.title)
-
     };
   });
 
@@ -109,32 +101,33 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
     return $scope.selectespecesName;
   }, function(newValue, oldValue) {
     if ($scope.selectespecesName) {
-
       var selecFleur = $scope.selectespecesName.originalObject.espece;
 
       leafletData.getMap().then(function(map) {
-
+        var cpt = 0;
         map.eachLayer(function(layer) {
           if (layer.feature) {
             if (layer.feature.properties.flores) {
               if (layer.feature.properties.flores) {
                 var tabFleur = layer.feature.properties.flores
+
                 angular.forEach(tabFleur, function(item, key) {
                   if (item.espece == selecFleur) {
+
+                    cpt++;
                     layer.setStyle({
                       color: '#ec971f'
                     });
+                    $scope.nbrSelected = cpt;
                             layer.on("mouseover", function(e) {
           // Change the style to the highlighted version
           layer.setStyle(highlightStyle);
           // Create a popup with a unique ID linked to this record
         });
-
         layer.on("mouseout", function(e) {
           // Change the style to the highlighted version
           layer.setStyle({color: '#ec971f'});
           // Create a popup with a unique ID linked to this record
-
         });
                   };
                 })
@@ -146,41 +139,26 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
       });
     }
   });
-
-
-
   // Autocomplete communes
-
   CommunesService.getName(function(error, communesName) {
     if (error) {
       $scope.error = error;
     }
-
     angular.forEach(communesName, function(item, key) {
-
       $scope.communesName.push(item.properties);
     })
-
-
   });
-
   FloreService.getEspece(function(error, especes) {
     if (error) {
       $scope.error = error;
     }
-
-    // $scope.especesName = especes;
     var tab = [];
     angular.forEach(especes, function(esp, key) {
-
       if (!_.contains(tab, esp.espece)) {
         tab.push(esp.espece);
         $scope.especesName.push(esp);
       }
-
     })
-
-
   });
 
   // Display commune
@@ -191,17 +169,11 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
     }
     $scope.zones = zones;
     addStartZones(zones);
-
-
   }
-
   ZonesService.get(callback);
-
   $scope.restoreZones = function() {
 
     leafletData.getMap().then(function(map) {
-
-
       $scope.selectespecesName = "";
       map.eachLayer(function(layer) {
         if (layer.feature) {
@@ -249,10 +221,6 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
 
   function addStartZones(layerGeoJson) {
     leafletData.getMap().then(function(map) {
-
-
-
-
       var callback = function(error, layerZone) {
         if (error) {
           $scope.error = error;
@@ -263,7 +231,6 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
       addLayerGeojson(callback, layerGeoJson);
     });
   }
-
   function addLayerGeojson(callback, layerGeoJson) {
 
     var layerZone = L.geoJson(layerGeoJson, {
@@ -271,25 +238,44 @@ app.controller('MapCtrl', function($scope, $filter, leafletData, ZonesService, C
         return feature.properties.style;
       },
       onEachFeature: function(feature, layer) {
-
         layer.setStyle(defaultStyle);
-
         layer.on("mouseover", function(e) {
           // Change the style to the highlighted version
           layer.setStyle(highlightStyle);
           // Create a popup with a unique ID linked to this record
         });
-
         layer.on("mouseout", function(e) {
           // Change the style to the highlighted version
           layer.setStyle(defaultStyle);
           // Create a popup with a unique ID linked to this record
-
         });
+
+
+
+            layer.on('click', function(e) {
+
+            var idZone = feature.properties.ID_MAPINFO;
+            if (idZone < 10) {
+                $scope.infoZone.id = "0000"+idZone;
+            }
+            else if (idZone < 99) {
+
+                $scope.infoZone.id = "000"+idZone;
+
+            }
+            else{
+              $scope.infoZone.id = "00"+idZone;
+            }
+
+             console.log($scope.infoZone.id);
+
+              });
 
         if (feature.properties.flores && feature.properties.flores.length > 0) {
 
           layer.on('click', function(e) {
+
+
             $scope.infoZone.commune = feature.properties.communes;
             $scope.infoZone.fleurs = feature.properties.flores;
           });
@@ -332,7 +318,6 @@ app.factory("FloreService", function($http) {
   };
 });
 
-
 app.factory("ZonesService", function($http) {
 
   var config = {
@@ -342,18 +327,6 @@ app.factory("ZonesService", function($http) {
   };
 
   return {
-    post: function(callback, newZone) {
-      $http.post(apiUrl + "/zones", {
-        "type": newZone.type,
-        "proprietes": newZone.proprietes,
-        "loc": newZone.geometry,
-      }, config).success(function(data) {
-        zone = data;
-        callback(null, zone);
-      }).error(function(error) {
-        callback(error);
-      });
-    },
     get: function(callback) {
       $http.get(apiUrl + "/zones", config).success(function(data) {
         var zone = data;

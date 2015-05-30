@@ -11,6 +11,50 @@ body {
   margin: 0px;
   padding: 0px;
 }
+.highlight {
+  color: #ff0000;
+}
+#addFlower {
+  float: right;
+  margin-top: 0.6em;
+}
+#newEsp {
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  color: #555;
+  display: block;
+  font-size: 14px;
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+  color: #439d43;
+  line-height: 1.42857;
+  padding: 6px 12px;
+  transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+  width: 70%;
+}
+#send {
+  margin-left: 25em;
+  margin-top: 1em;
+}
+#newCom {
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  color: #555;
+  display: block;
+  font-size: 14px;
+  margin-bottom: 0.6em;
+  color: #ac0404;
+  line-height: 1.42857;
+  padding: 6px 12px;
+  transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+  width: 70%;
+}
 #map {
   width: 100%;
   height: 100%;

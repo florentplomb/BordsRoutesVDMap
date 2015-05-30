@@ -7,7 +7,7 @@ var express = require('express'),
 
 
 module.exports = function(app) {
-	app.use('/draw', router);
+	app.use('api/draw', router);
 	//  app.use(express.static('public'));
 };
 
@@ -38,17 +38,10 @@ var zone = req.body.zone;
 			})
 			.select("properties _id")
 			.exec(function(err, communes) {
-
-				console.log("heyyy");
-
 				if (err) return next(err);
 				communes.forEach(function(commune) {
 				communeName.push(commune);
-
 				});
-
-				console.log(communeName);
-
 				return res.status(200).json(communeName)
 
 			});
