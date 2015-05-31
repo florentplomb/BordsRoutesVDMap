@@ -90,8 +90,40 @@ body {
 h4 {
   color: #9889f0;
 }
+#chapeau {
+  color: #949494;
+  text-decoration: none;
+  outline: 0;
+}
+.leaflet-container .leaflet-control-attribution {
+  visibility: hidden;
+}
+#credit {
+  padding-left: 2px;
+  position: fixed;
+  bottom: 0px;
+  width: 20%;
+  right: 1%;
+  background-color: #ebebeb;
+  color: black;
+  font-size: 12px;
+}
+#credit a {
+  text-decoration: none;
+}
+#goMap {
+  float: right;
+  background-color: #60aa00;
+  color: #fff;
+}
+.fa-external-link:before {
+  content: "\f08e";
+  outline: 0;
+}
 .ngdialog.ngdialog-theme-default .ngdialog-content {
-  width: 50%;
+  width: 55%;
+  background-image: url("../img/start1d.jpg");
+  height: 600px;
 }
 .margeTop {
   margin-top: 1em;

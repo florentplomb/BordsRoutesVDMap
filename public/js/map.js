@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('app', ['leaflet-directive', 'angucomplete-alt', 'ngDialog' ]);
+var app = angular.module('app', ['leaflet-directive', 'angucomplete-alt', 'ngDialog']);
 //var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
 var apiUrl = "http://fleurs-vd.herokuapp.com/api";
@@ -10,10 +10,10 @@ underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
 
-app.controller('MapCtrl', function($scope, $filter, ngDialog,leafletData, ZonesService, CommunesService, $http, FloreService) {
+app.controller('MapCtrl', function($scope, $filter, ngDialog, leafletData, ZonesService, CommunesService, $http, FloreService) {
 
   var zonesTalus = [];
-   var yverdon = {
+  var yverdon = {
     lat: 46.841759385352,
     lng: 6.64475440979004,
     zoom: 10
@@ -42,42 +42,44 @@ app.controller('MapCtrl', function($scope, $filter, ngDialog,leafletData, ZonesS
   $scope.map.center = yverdon;
   // url MapBox
 
-    // ngDialog.open({
-    //         template: 'pop.html',
-    //         scope: $scope
-    //       });
+  ngDialog.open({
+    template: 'pop.html',
+    scope: $scope
+  });
+
+
 
   var mapboxTileLayer = "http://api.tiles.mapbox.com/v4/" + "fplomb.685fc191";
   mapboxTileLayer = mapboxTileLayer + "/{z}/{x}/{y}.png?access_token=" + "pk.eyJ1IjoiZnBsb21iIiwiYSI6ImJwRUF2ZlkifQ.OIuXY-qgnEBzcnYwXg8imw";
   var baselayers = {
-    baselayers: {
-     osm: {
-        name: 'OpenStreetMap',
-        url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        type: 'xyz'
-      },
+      baselayers: {
+        osm: {
+          name: 'OpenStreetMap',
+          url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          type: 'xyz'
+        },
         mapbox_light: {
-        name: 'Frontières communales',
-        url: mapboxTileLayer,
-        type: 'xyz',
-        layerOptions: {
-          apikey: 'pk.eyJ1IjoiYnVmYW51dm9scyIsImEiOiJLSURpX0pnIn0.2_9NrLz1U9bpwMQBhVk97Q',
-          mapid: 'fplomb.685fc191'
-        }
-      },
-      googleSatellite: {
-        name: 'Google Satellite',
-        layerType: 'SATELLITE',
-        type: 'google'
-      },
-      googleRoadmap: {
-        name: 'Google Streets',
-        layerType: 'ROADMAP',
-        type: 'google'
-      },
+          name: 'Frontières communales',
+          url: mapboxTileLayer,
+          type: 'xyz',
+          layerOptions: {
+            apikey: 'pk.eyJ1IjoiYnVmYW51dm9scyIsImEiOiJLSURpX0pnIn0.2_9NrLz1U9bpwMQBhVk97Q',
+            mapid: 'fplomb.685fc191'
+          }
+        },
+        googleSatellite: {
+          name: 'Google Satellite',
+          layerType: 'SATELLITE',
+          type: 'google'
+        },
+        googleRoadmap: {
+          name: 'Google Streets',
+          layerType: 'ROADMAP',
+          type: 'google'
+        },
+      }
     }
-  }
-  // Center map on commune selected
+    // Center map on commune selected
   $scope.$watch(function() {
     return $scope.selectcommunesName;
   }, function(newValue, oldValue) {
@@ -119,16 +121,18 @@ app.controller('MapCtrl', function($scope, $filter, ngDialog,leafletData, ZonesS
                       color: '#ec971f'
                     });
                     $scope.nbrSelected = cpt;
-                            layer.on("mouseover", function(e) {
-          // Change the style to the highlighted version
-          layer.setStyle(highlightStyle);
-          // Create a popup with a unique ID linked to this record
-        });
-        layer.on("mouseout", function(e) {
-          // Change the style to the highlighted version
-          layer.setStyle({color: '#ec971f'});
-          // Create a popup with a unique ID linked to this record
-        });
+                    layer.on("mouseover", function(e) {
+                      // Change the style to the highlighted version
+                      layer.setStyle(highlightStyle);
+                      // Create a popup with a unique ID linked to this record
+                    });
+                    layer.on("mouseout", function(e) {
+                      // Change the style to the highlighted version
+                      layer.setStyle({
+                        color: '#ec971f'
+                      });
+                      // Create a popup with a unique ID linked to this record
+                    });
                   };
                 })
               };
@@ -179,18 +183,18 @@ app.controller('MapCtrl', function($scope, $filter, ngDialog,leafletData, ZonesS
         if (layer.feature) {
           if (layer.feature.properties.flores) {
             layer.setStyle(defaultStyle)
-              layer.on("mouseover", function(e) {
-          // Change the style to the highlighted version
-          layer.setStyle(highlightStyle);
-          // Create a popup with a unique ID linked to this record
-        });
+            layer.on("mouseover", function(e) {
+              // Change the style to the highlighted version
+              layer.setStyle(highlightStyle);
+              // Create a popup with a unique ID linked to this record
+            });
 
-        layer.on("mouseout", function(e) {
-          // Change the style to the highlighted version
-          layer.setStyle(defaultStyle);
-          // Create a popup with a unique ID linked to this record
+            layer.on("mouseout", function(e) {
+              // Change the style to the highlighted version
+              layer.setStyle(defaultStyle);
+              // Create a popup with a unique ID linked to this record
 
-        });;
+            });;
           }
         }
       });
@@ -231,6 +235,7 @@ app.controller('MapCtrl', function($scope, $filter, ngDialog,leafletData, ZonesS
       addLayerGeojson(callback, layerGeoJson);
     });
   }
+
   function addLayerGeojson(callback, layerGeoJson) {
 
     var layerZone = L.geoJson(layerGeoJson, {
@@ -252,24 +257,22 @@ app.controller('MapCtrl', function($scope, $filter, ngDialog,leafletData, ZonesS
 
 
 
-            layer.on('click', function(e) {
+        layer.on('click', function(e) {
 
-            var idZone = feature.properties.ID_MAPINFO;
-            if (idZone < 10) {
-                $scope.infoZone.id = "0000"+idZone;
-            }
-            else if (idZone < 99) {
+          var idZone = feature.properties.ID_MAPINFO;
+          if (idZone < 10) {
+            $scope.infoZone.id = "0000" + idZone;
+          } else if (idZone < 99) {
 
-                $scope.infoZone.id = "000"+idZone;
+            $scope.infoZone.id = "000" + idZone;
 
-            }
-            else{
-              $scope.infoZone.id = "00"+idZone;
-            }
+          } else {
+            $scope.infoZone.id = "00" + idZone;
+          }
 
-             console.log($scope.infoZone.id);
+          console.log($scope.infoZone.id);
 
-              });
+        });
 
         if (feature.properties.flores && feature.properties.flores.length > 0) {
 

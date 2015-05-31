@@ -54,19 +54,17 @@
 <script type="text/ng-template" id="pop.html">
   <div id="formu">
 
-            <h4>Bienvenue sur cartographie des bord de routes du canton de Vaud </h4>
-            <div>Cette application présente les données issue de l'inventaire des bord de route vaudoise entamé par Pro Natura en 1996</div>
+            <h4 >Bienvenue sur la cartographie des bords de routes fleuris du canton de Vaud <a id="chapeau" TARGET="_blank"  href="http://www.pronatura-vd.ch/talus-de-route"> <i class="fa fa-external-link"></i> </a> </h4>
+            <div>Ce projet présente les données issues de l'inventaire des bords de routes vaudoises entamé par Pro Natura en 1996. A l'heure acutelle le bureau d'environement <a TARGET="_blank"  href="http://www.humagis.ch/CMSMS/"> Maillefer & Hunziker </a> offre bénévolement une part de son temps pour enrichir et stocker les données de cet inventaire. Ce bureau a mandaté un étudiant de dernière année en ingénierie des médias à <a TARGET="_blank"  href="http://www.heig-vd.ch"> l'HEIG-VD </a> afin de réaliser cette application dans le cadre de son travail préparatoire de bachelor. </div>
 
-
-
-     <button type="submit" class="btn btn-default" ng-click="storeZone()">Submit</button>
+       <button type="submit" id="goMap" class="btn btn-default " ng-click="closeThisDialog('Cancel')">Acceder à la carte</button>
 
 
   </div>
 </script>
 </head>
 <body ng-controller="MapCtrl">
-<div id="map-wrapper">
+
 <div id="map">
 
   <leaflet  event-broadcast="events" defaults="mapDefaults"   layers="layers"  center="map.center"   height='100%'>
@@ -82,7 +80,10 @@
   <div  ng-click="restoreZones()"  ng-show="selectespecesName">
     <button type="button" class="btn btn-warning ">{{nbrSelected}} {{selectespecesName.originalObject.espece}} <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
   </div>
-</div>
+    </div>
+    <div id="credit">
+    Author :  <a href="mailto:plombfg@gmail.com">F.Plomb</a>
+  </div>
 <div id="infoCommunes" ng-show="selectcommunesName" >
     <p>Commune : {{selectcommunesName.originalObject.NAME}}<p>
     <p> Nombre de zones : {{infoCommunes.nbrZones}}</p>
@@ -99,9 +100,10 @@
 
     <div class="titre margeTop"><img src='/img/flower2.png' alt='Flower'  width='25' height='25'/> Espèce(s) </div>
     <div ng-repeat="fleur in infoZone.fleurs">
-    <p><div id="allFleurs" class="listeFleurs"><li ><a ng-hide="fleur.espece == 'Aucune fleur répértoriée'" TARGET="_blank" class="colorLink" ng-href="http://www.google.fr/search?q={{fleur.espece}}">{{fleur.espece}}</a> <p ng-show="fleur.espece == 'Aucune fleur répértoriée'">{{fleur.espece}}</p>
+    <div id="allFleurs" class="listeFleurs"><li ><a ng-hide="fleur.espece == 'Aucune fleur répértoriée'" TARGET="_blank" class="colorLink" ng-href="http://www.google.fr/search?q={{fleur.espece}}">{{fleur.espece}}</a> <p ng-show="fleur.espece == 'Aucune fleur répértoriée'">{{fleur.espece}}
     </div>
   </div>
+
 </div>
 
 
