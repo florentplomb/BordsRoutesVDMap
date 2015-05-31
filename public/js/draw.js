@@ -1,6 +1,7 @@
 'use strict';
 
 var drawApp = angular.module('draw', ['leaflet-directive', 'angucomplete-alt', 'ngDialog']);
+
 //var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
 var apiUrl = "http://fleurs-vd.herokuapp.com/api";
@@ -128,9 +129,15 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
     $scope.newZone.properties.flores = fleurs;
      var cb = function(err, zoneSaved){
       console.log("Saved : "+zoneSaved);
+      location.reload();
+
+
+
      }
      console.log($scope.newZone);
-    ZonesService.post(cb,$scope.newZone)
+    ZonesService.post(cb,$scope.newZone);
+
+
   }
 });
 
@@ -210,7 +217,7 @@ drawApp.factory("DrawService", function($http) {
   };
   return {
     postZone: function(callback, zone) {
-      $http.post(apiUrl+"draw/locZone", {
+      $http.post("http://fleurs-vd.herokuapp.com/draw/locZone", {
         "zone": zone
       }, config).success(function(data) {
 

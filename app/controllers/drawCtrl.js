@@ -7,7 +7,7 @@ var express = require('express'),
 
 
 module.exports = function(app) {
-	app.use('api/draw', router);
+	app.use('/draw', router);
 	//  app.use(express.static('public'));
 };
 

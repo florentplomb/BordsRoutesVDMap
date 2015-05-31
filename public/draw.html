@@ -78,7 +78,6 @@
 						</div>
 					</ul>
 				</div>
-
 				<label for="exampleInputEmail1">Fiabilité:</label>
 				<input type="text" class="form-control" ng-model="newZone.properties.FIABILITE" id="exampleInputEmail1" placeholder="Entrer une Fiabilité">
 				<label for="exampleInputEmail1">Type:</label>
@@ -87,7 +86,7 @@
 				<textarea type="text" class="form-control" ng-model="newZone.properties.DESCRIPTIO" id="exampleInputEmail1" placeholder="Entrer une description"></textarea>
 				<label for="exampleInputEmail1">Entretien:</label>
 				<textarea type="text" class="form-control" ng-model="newZone.properties.ENTRETIEN" id="exampleInputEmail1" placeholder="Entrer un état sur l'entretien"></textarea>
-				<button id="send"type="submit" type="button" class="btn btn-primary" ng-click="storeZone()">Envoyer</button>
+			<button id="send"type="submit" type="button" class="btn btn-primary" ng-click=" closeThisDialog('Cancel'); storeZone();  ">Envoyer</button>
 			</div>
 
 		</form>
