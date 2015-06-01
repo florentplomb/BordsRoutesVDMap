@@ -1,4 +1,4 @@
-# Bienvenue sur l'application Citizen Engagement
+# Bienvenue sur la cartographie des bords de routes fleuris du canton de Vaud
 
 Auteur : Florent Plomb
 
