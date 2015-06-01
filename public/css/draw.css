@@ -14,6 +14,18 @@ body {
 .highlight {
   color: #ff0000;
 }
+.leaflet-draw-toolbar .leaflet-draw-draw-polygon {
+  visibility: hidden;
+}
+.leaflet-draw-toolbar .leaflet-draw-draw-rectangle {
+  visibility: hidden;
+}
+.leaflet-draw-toolbar .leaflet-draw-draw-circle {
+  visibility: hidden;
+}
+.leaflet-draw-toolbar .leaflet-draw-draw-marker {
+  visibility: hidden;
+}
 #addFlower {
   float: right;
   margin-top: 0.6em;
