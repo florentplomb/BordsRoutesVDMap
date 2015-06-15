@@ -93,7 +93,7 @@ router.route('/center')
             var distTot = 0;
             zones.forEach(function(zone) {
               var dist = 0;
-              var zone = zone.geometry.coordinates[0];
+              var zone = zone.geometry.coordinates;
               dist = geoJsonTool.getDistance(zone);
               distTot = dist + distTot;
             });

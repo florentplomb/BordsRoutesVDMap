@@ -43,8 +43,8 @@ router.route('/')
       var geom = {};
       var coordinates = [];
       coordinates.push(req.body.zone.geometry.coordinates);
-       geom.type ="MultiLineString";
-       geom.coordinates = coordinates;
+      geom.type = "LineString";
+      geom.coordinates = coordinates;
 
       console.log(coordinates);
 
@@ -92,6 +92,114 @@ router.route('/info')
       });
 
   });
+
+
+router.route('/toline')
+  .post(function(req, res, next) {
+
+    Zone.find()
+      .exec(function(err, zones) {
+        zones.forEach(function(zone) {
+          if (zone.properties.flores) {
+
+            if (zone.geometry.type && zone.geometry.coordinates) {
+
+              // zone.geometry = {
+              //   "type": "LineString"
+              // };
+
+
+                var newC;
+
+                // console.log(zone.geometry.coordinates[j]);
+                newC = zone.geometry.coordinates[0];
+
+                // zone.geometry = {"coordinates":[]}
+                zone.geometry = {"coordinates":newC , "type" : "LineString"};
+
+              zone.save();
+
+
+
+              // zone.geometry.coordinates.forEach(function(co) {
+              //   console.log(co);
+              //   newC = co;
+              //   zone.geometry.coordinates = [];
+              //   zone.geometry.coordinates.push(co);
+              // })
+              // zone.save();
+              // console.log(zone.id);
+
+            }
+
+          };
+
+
+        });
+        return res.status(200).json("finito");
+      })
+
+  });
+
+
+
+//   console.log(req.body.id);
+// Zone.find(req.body.id, function (err, thing) {
+//   if (err) { return handleError(res, err); }
+//   console.log(thing);
+//   if(!thing) { return res.sendStatus(404) }
+//   // var updated = _.merge(thing, req.body);
+//   thing.geometry.type = "test";
+//   thing.save(function (err,zoneS) {
+//     if (err) { return handleError(res, err); }
+//     return res.status(200).json(zoneS)
+//   });
+// });
+
+
+
+// var cpt= 0;
+//     var toline = [];
+
+// var  zone = new Zone(req.body.zone);
+
+//         zone.save(function(err, zoneSaved) {
+//         if (err) return validationError(res, err);
+
+//         console.log(zoneSaved);
+//         return res.status(400).json(zoneSaved).end();
+
+
+//       });
+
+
+
+// Zone.find()
+//   .exec(function(err, zones) {
+//   zones.forEach(function(zone){
+//     console.log(zone.id);
+//     console.log(zone.geometry.type);
+
+//     if (zone.geometry.type) {
+//       zone.geometry.type = "LineString";
+//       zone.geometry.test = "hey";
+//       cpt++;
+//     }
+//     console.log(zone.geometry.type);
+//     // zone.geometry.coordinates = toline;
+
+//      // console.log(toline);
+//     zone.save(function(err, zoneSaved) {
+//     if (err) return validationError(res, err);
+//     console.log(zoneSaved);
+//   });
+
+//   })
+
+//   return res.status(200).json(cpt);
+
+//   })
+
 
 
 ///// Script d'ajout de fleurs pour chaque zone ///////////

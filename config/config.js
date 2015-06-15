@@ -8,10 +8,10 @@ var config = {
     app: {
       name: 'appmap'
     },
-    port: process.env.PORT,
-    db: process.env.MONGODB_CON_STRING
-    // port: 3000,
-    // db: 'mongodb://localhost/appmap-development'
+    // port: process.env.PORT,
+    // db: process.env.MONGODB_CON_STRING
+    port: 3000,
+    db: 'mongodb://localhost/appmap'
   },
   //gandi
   // development: {
