@@ -1,0 +1,53 @@
+
+
+
+
+1 . Dans gandi , activer la console ssh
+2.Dans le repertoire de mon appli sur mon pc en local faire :
+ git remote add gandi ssh+git://235856@git.dc2.gpaas.net/default.git
+	3.
+Git push master gandi master
+
+Bonjour,
+j'étais aussi dans le même cas, et en faisant plusieurs essais, j'ai fini
+par trouver la solution :
+tout d'abord faire un git push sur le dépot gandi
+git push gandi master
+(où "gandi" est le remote repository pour le serveur gandi, souvent appelé
+"origin")
+et ensuite :
+ssh XXXXX@git.YYY.gpaas.net 'deploy default.git'
+où XXX sont les identifiant (série de chifres) et YYY la localisation du
+serveur (dc0, dc1...)
+Ce qui copie effectivement les fichiers et installe les dépendances listés
+dans le fichier "package.json"
+J'espère que c'est clair ;)
+
+À partir de l’adresse <http://groups.gandi.net/fr/topic/gandi.fr.hebergement.simple/36542>
+
+
+
+
+4.
+Pour lier le fichier app.js a leurs fichier server.js : ln -s app.js server.js
+
+https://wiki.gandi.net/fr/simple/git
+
+Base de données:
+
+Se conecter sur le host avec le git shell ( putty) et faire un restore :
+ mongorestore BackUpMongo/appmap
+
+La mon backupmongo est déjà sur le server
+
+5.
+Pour relancer l'instance
+
+Se connecter avec putty en ssh et aller dans le dosier web/vhosts/default
+Et faire des
+ npm start
+
+Attention au port du server j'ai du le changer dans le config
+
+
+

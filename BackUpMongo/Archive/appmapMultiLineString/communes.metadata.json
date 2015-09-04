@@ -1,1 +1,0 @@
-{ "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "name" : "_id_", "ns" : "appmap-development.communes" }, { "v" : 1, "key" : { "geometry" : "2dsphere" }, "name" : "geometry_2dsphere", "ns" : "appmap-development.communes", "2dsphereIndexVersion" : 2 } ] }

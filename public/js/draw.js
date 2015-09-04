@@ -2,9 +2,9 @@
 
 var drawApp = angular.module('draw', ['leaflet-directive', 'angucomplete-alt', 'ngDialog']);
 
-//var apiUrl = "http://localhost:3000/api";
+var apiUrl = "http://localhost:3000/api";
 //var apiUrl = "http://florentplomb.ch/api";
-var apiUrl = "http://fleurs-vd.herokuapp.com/api";
+//var apiUrl = "http://fleurs-vd.herokuapp.com/api";
 
 var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
