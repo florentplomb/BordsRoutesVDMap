@@ -127,9 +127,10 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
           })
     $scope.newZone.properties.communes = newCom;
     $scope.newZone.properties.flores = fleurs;
+
      var cb = function(err, zoneSaved){
-      console.log("Saved : "+zoneSaved);
-      location.reload();
+   //   console.log("Saved : "+zoneSaved);
+     // location.reload();
 
 
 
@@ -217,7 +218,7 @@ drawApp.factory("DrawService", function($http) {
   };
   return {
     postZone: function(callback, zone) {
-      $http.post("http://fleurs-vd.herokuapp.com/draw/locZone", {
+      $http.post("http://localhost:3000/draw/locZone", {
         "zone": zone
       }, config).success(function(data) {
 

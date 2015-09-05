@@ -27,7 +27,7 @@ router.route('/')
   })
   .post(function(req, res, next) {
     if (!req.body.zone) return res.status(400).json({
-      message: 'bad request'
+      message: 'bad request '
     }).end();
 
     var id = 0;
@@ -41,12 +41,10 @@ router.route('/')
         }).end();
       }
       var geom = {};
-      var coordinates = [];
-      coordinates.push(req.body.zone.geometry.coordinates);
       geom.type = "LineString";
-      geom.coordinates = coordinates;
+      geom.coordinates = req.body.zone.geometry.coordinates
 
-      console.log(coordinates);
+
 
       var newZone = new Zone();
 
@@ -62,7 +60,7 @@ router.route('/')
         if (err) return validationError(res, err);
 
 
-        return res.status(400).json(zoneSaved).end();
+        return res.status(200).json(zoneSaved).end();
 
 
       });
