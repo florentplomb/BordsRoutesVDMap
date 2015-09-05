@@ -130,7 +130,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
      var cb = function(err, zoneSaved){
    //   console.log("Saved : "+zoneSaved);
-     // location.reload();
+     location.reload();
 
 
 
