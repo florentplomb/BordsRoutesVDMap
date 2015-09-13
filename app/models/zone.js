@@ -16,7 +16,8 @@ var ZoneSchema = new Schema({
  	LOCALISATI : String,
     CANTONALE : String,
     DESCRIPTIO : String,
-    ENTRETIEN : String
+    ENTRETIEN : String,
+    created_at : {type: Date, default: Date.now}
  },
  geometry: Schema.Types.Mixed,
 

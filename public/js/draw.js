@@ -10,15 +10,17 @@ var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
-drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, tags, FloreService,DrawService,ZonesService) {
+drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, tags, FloreService, DrawService, ZonesService) {
   var yverdon = {
     lat: 46.841759385352,
     lng: 6.64475440979004,
     zoom: 10
   };
   tags.data = [];
+
   $scope.layers = {};
   $scope.map = {};
+  $scope.geojson = null;
   $scope.infoZone = {};
   $scope.events = {};
   $scope.communesName = [];
@@ -31,11 +33,11 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
   $scope.controls.draw = {
 
     polyline: {
-          shapeOptions: {
-            color: 'red',
-            opacity : 1
-          },
-        }
+      shapeOptions: {
+        color: 'red',
+        opacity: 1
+      },
+    }
   };
   $scope.selectespecesName = "";
   $scope.newZone = {};
@@ -43,45 +45,66 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
   var mapboxTileLayer = "http://api.tiles.mapbox.com/v4/" + "fplomb.685fc191";
   mapboxTileLayer = mapboxTileLayer + "/{z}/{x}/{y}.png?access_token=" + "pk.eyJ1IjoiZnBsb21iIiwiYSI6ImJwRUF2ZlkifQ.OIuXY-qgnEBzcnYwXg8imw";
 
-  var baselayers = {
-    baselayers: {
 
-      mapbox_light: {
-        name: 'Frontières communales',
-        url: mapboxTileLayer,
-        type: 'xyz',
-        layerOptions: {
-          apikey: 'pk.eyJ1IjoiYnVmYW51dm9scyIsImEiOiJLSURpX0pnIn0.2_9NrLz1U9bpwMQBhVk97Q',
-          mapid: 'fplomb.685fc191'
+  leafletData.getMap().then(function(map) {
+
+    $scope.layers = {
+      baselayers: {
+        osm: {
+          name: 'OpenStreetMap',
+          url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          type: 'xyz'
+        },
+        cloudmade: {
+          name: 'Cloudmade Tourist',
+          type: 'xyz',
+          url: 'http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png',
+          layerParams: {
+            key: '007b9471b4c74da4a6ec7ff43552b16f',
+            styleId: 7
+          }
         }
-      },
-      googleSatellite: {
-        name: 'Google Satellite',
-        layerType: 'SATELLITE',
-        type: 'google'
-      },
-      googleRoadmap: {
-        name: 'Google Streets',
-        layerType: 'ROADMAP',
-        type: 'google'
+
+      }
+    }
+  });
+
+  $scope.test = function() {
+
+    if (!$scope.geojson) {
+
+      $scope.geojson = {};
+      var cbZones = function(error, zones) {
+        if (error) {
+          $scope.error = error;
+        }
+        $scope.geojson.data = zones;
+
       }
 
+      ZonesService.get(cbZones);
+    } else {
+      console.log("msm");
+      $scope.geojson = null;
     }
+
   }
-  $scope.layers = baselayers;
+
+
+
   FloreService.getEspece(function(error, especes) {
     if (error) {
       $scope.error = error;
     }
-// var tab = [];
-//     angular.forEach(especes, function(esp, key) {
+    // var tab = [];
+    //     angular.forEach(especes, function(esp, key) {
 
-//       if (!_.contains(tab, esp.espece)) {
-//         tab.push(esp.espece);
-//         $scope.especesName.push(esp);
-//       }
+    //       if (!_.contains(tab, esp.espece)) {
+    //         tab.push(esp.espece);
+    //         $scope.especesName.push(esp);
+    //       }
 
-//     })
+    //     })
 
     var tab = [];
     angular.forEach(especes, function(esp, key) {
@@ -100,43 +123,42 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
       $scope.newZone = layer.toGeoJSON();
       DrawService.postZone(function(error, communeName) {
-          if (error) {
-            $scope.error = error;
-          }
-          $scope.communeName = [];
-          angular.forEach(communeName, function(name, key) {
-            $scope.communeName.push(name);
-          })
-          ngDialog.open({
-            template: 'pop.html',
-            scope: $scope
-          });
-        }, layer.toGeoJSON()
-      );
+        if (error) {
+          $scope.error = error;
+        }
+        $scope.communeName = [];
+        angular.forEach(communeName, function(name, key) {
+          $scope.communeName.push(name);
+        })
+        ngDialog.open({
+          template: 'pop.html',
+          scope: $scope
+        });
+      }, layer.toGeoJSON());
     });
   });
 
-   $scope.storeZone = function() {
+  $scope.storeZone = function() {
     var newCom = [];
     angular.forEach($scope.communeName, function(com, key) {
-            newCom.push(com._id);
-          })
-      var fleurs = [];
+      newCom.push(com._id);
+    })
+    var fleurs = [];
     angular.forEach(tags.data, function(fleur, key) {
-            fleurs.push(fleur._id);
-          })
+      fleurs.push(fleur._id);
+    })
     $scope.newZone.properties.communes = newCom;
     $scope.newZone.properties.flores = fleurs;
 
-     var cb = function(err, zoneSaved){
-   //   console.log("Saved : "+zoneSaved);
-     location.reload();
+    var cb = function(err, zoneSaved) {
+      //   console.log("Saved : "+zoneSaved);
+      location.reload();
 
 
 
-     }
-     console.log($scope.newZone);
-    ZonesService.post(cb,$scope.newZone);
+    }
+    console.log($scope.newZone);
+    ZonesService.post(cb, $scope.newZone);
 
 
   }
@@ -177,7 +199,7 @@ drawApp.factory("ZonesService", function($http) {
   return {
     post: function(callback, newZone) {
       $http.post(apiUrl + "/zones", {
-        "zone" : newZone ,
+        "zone": newZone,
       }, config).success(function(data) {
         var zone = data;
         callback(null, zone);
@@ -223,6 +245,26 @@ drawApp.factory("DrawService", function($http) {
       }, config).success(function(data) {
 
         callback(null, data);
+      }).error(function(error) {
+        callback(error);
+      });
+    }
+  };
+});
+
+drawApp.factory("ZonesService", function($http) {
+
+  var config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return {
+    get: function(callback) {
+      $http.get(apiUrl + "/zones", config).success(function(data) {
+        var zone = data;
+        callback(null, zone);
       }).error(function(error) {
         callback(error);
       });

@@ -101,8 +101,11 @@
 
 		<div id="map">
 
-			<leaflet  event-broadcast="events" controls="controls" defaults="mapDefaults"  layers="layers"  center="map.center"   height='100%'>
-			</leaflet>
+			 <leaflet center="map.center" geojson="geojson" controls="controls" markers="markers" layers="layers" width="100%" height="480px"></leaflet>
+			 <button ng-click="test()">test</button>
+
+	<!-- 		<leaflet  event-broadcast="events" controls="controls" defaults="mapDefaults"  layers="layers"  center="map.center"   height='100%'>
+			</leaflet> -->
 		</div>
 
 
