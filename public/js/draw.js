@@ -10,28 +10,17 @@ var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
-drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, tags, FloreService, DrawService, ZonesService) {
-  var yverdon = {
-    lat: 46.841759385352,
-    lng: 6.64475440979004,
-    zoom: 10
-  };
-  tags.data = [];
+drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, ZonesService) {
 
-  $scope.layers = {};
+
+  // Variable AngularsJs SCOPE //
+
   $scope.map = {};
-  $scope.geojson = null;
   $scope.infoZone = {};
-  $scope.events = {};
-  $scope.communesName = [];
-  $scope.especesName = [];
-  $scope.map = {};
-  $scope.map.markers = [];
-  $scope.map.center = {};
-  $scope.map.center = yverdon;
+  $scope.IdLayerCliked = -1;
+  $scope.editMode = false;
   $scope.controls = {};
   $scope.controls.draw = {
-
     polyline: {
       shapeOptions: {
         color: 'red',
@@ -39,218 +28,156 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
       },
     }
   };
-  $scope.selectespecesName = "";
-  $scope.newZone = {};
-  // url MapBox
-  var mapboxTileLayer = "http://api.tiles.mapbox.com/v4/" + "fplomb.685fc191";
-  mapboxTileLayer = mapboxTileLayer + "/{z}/{x}/{y}.png?access_token=" + "pk.eyJ1IjoiZnBsb21iIiwiYSI6ImJwRUF2ZlkifQ.OIuXY-qgnEBzcnYwXg8imw";
-
-
-  leafletData.getMap().then(function(map) {
-
-    $scope.layers = {
-      baselayers: {
-        osm: {
-          name: 'OpenStreetMap',
-          url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          type: 'xyz'
-        },
-        cloudmade: {
-          name: 'Cloudmade Tourist',
-          type: 'xyz',
-          url: 'http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png',
-          layerParams: {
-            key: '007b9471b4c74da4a6ec7ff43552b16f',
-            styleId: 7
-          }
-        }
-
-      }
-    }
-  });
-
-  $scope.test = function() {
-
-    if (!$scope.geojson) {
-
-      $scope.geojson = {};
-      var cbZones = function(error, zones) {
-        if (error) {
-          $scope.error = error;
-        }
-        $scope.geojson.data = zones;
-
-      }
-
-      ZonesService.get(cbZones);
-    } else {
-      console.log("msm");
-      $scope.geojson = null;
-    }
-
-  }
 
 
 
-  FloreService.getEspece(function(error, especes) {
+  // Variable JS //
+
+  var defaultStyle = {
+    color: "#c5128a", // #02a6a6 //#ff7e61 //#d87c50 //#256aa6
+    weight: 6,
+    opacity: 0.7,
+
+    fillColor: "blue"
+  };
+  var highlightStyle = {
+    color: '#1072ac',
+  };
+
+  var highlight = {
+    color: "#0000ff",
+    opacity: 1
+
+  };
+
+  $scope.map.center = {
+    lat: 46.841759385352,
+    lng: 6.64475440979004,
+    zoom: 10
+  };
+
+  ZonesService.get(function(error, zones) {
     if (error) {
       $scope.error = error;
     }
-    // var tab = [];
-    //     angular.forEach(especes, function(esp, key) {
 
-    //       if (!_.contains(tab, esp.espece)) {
-    //         tab.push(esp.espece);
-    //         $scope.especesName.push(esp);
-    //       }
 
-    //     })
+    leafletData.getMap().then(function(map) {
 
-    var tab = [];
-    angular.forEach(especes, function(esp, key) {
-      if (!_.contains(tab, esp.espece)) {
-        tab.push(esp.espece);
-        $scope.especesName.push(esp);
-      }
-    })
-  });
-  leafletData.getMap().then(function(map) {
-    var drawnItems = $scope.controls.edit.featureGroup;
+      $scope.layerzones = L.geoJson(zones, {
+        style: function(feature) {
+          return feature.properties.style;
+        },
+        onEachFeature: function(feature, layer) {
 
-    map.on('draw:created', function(e) {
-      var layer = e.layer;
-      drawnItems.addLayer(layer);
+          layer.setStyle(defaultStyle);
 
-      $scope.newZone = layer.toGeoJSON();
-      DrawService.postZone(function(error, communeName) {
-        if (error) {
-          $scope.error = error;
+          layer.on('click', function(e) {
+
+            highlightLayer(layer._leaflet_id);
+            console.log(layer);
+
+
+            var idZone = feature.properties.ID_MAPINFO;
+            if (idZone < 10) {
+              $scope.infoZone.id = "0000" + idZone;
+            } else if (idZone < 99) {
+
+              $scope.infoZone.id = "000" + idZone;
+
+            } else {
+              $scope.infoZone.id = "00" + idZone;
+            }
+
+          });
+
+          if (feature.properties.flores && feature.properties.flores.length > 0) {
+
+            layer.on('click', function(e) {
+              $scope.infoZone.commune = feature.properties.communes;
+              $scope.infoZone.fleurs = feature.properties.flores;
+            });
+          } else {
+            layer.on('click', function(e) {
+              $scope.infoZone.commune = feature.properties.communes;
+              $scope.infoZone.fleurs = [{
+                espece: "Aucune fleur répértoriée"
+              }];
+
+            });
+          };
+
+
         }
-        $scope.communeName = [];
-        angular.forEach(communeName, function(name, key) {
-          $scope.communeName.push(name);
-        })
-        ngDialog.open({
-          template: 'pop.html',
-          scope: $scope
-        });
-      }, layer.toGeoJSON());
+      })
+
+      L.control.layers({
+        'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+      }, {
+        'Lignes': $scope.layerzones
+      }).addTo(map);
+
+      var highlightLayer = function(layerID) {
+        if ($scope.IdLayerCliked >= 0) {
+
+          map._layers[$scope.IdLayerCliked].setStyle(defaultStyle)
+          map._layers[layerID].setStyle(highlight);
+          $scope.IdLayerCliked = layerID;
+        } else {
+          map._layers[layerID].setStyle(highlight);
+          $scope.IdLayerCliked = layerID;
+        };
+      }
+
     });
+
   });
 
-  $scope.storeZone = function() {
-    var newCom = [];
-    angular.forEach($scope.communeName, function(com, key) {
-      newCom.push(com._id);
-    })
-    var fleurs = [];
-    angular.forEach(tags.data, function(fleur, key) {
-      fleurs.push(fleur._id);
-    })
-    $scope.newZone.properties.communes = newCom;
-    $scope.newZone.properties.flores = fleurs;
+  $scope.editGeom = function() {
+    $scope.editMode = true;
 
-    var cb = function(err, zoneSaved) {
-      //   console.log("Saved : "+zoneSaved);
-      location.reload();
+    leafletData.getMap().then(function(map) {
 
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
 
-
+      // Initialise the draw control and pass it the FeatureGroup of editable layers
+      var drawControl = new L.Control.Draw({
+        edit: {
+          featureGroup: drawnItems
+        },
+         draw: {
+        polyline: false,
+        rectangle :false,
+        circle : false,
+        marker : false
     }
-    console.log($scope.newZone);
-    ZonesService.post(cb, $scope.newZone);
-
-
-  }
-});
-
-
-drawApp.controller('TagsController', function($scope, $rootScope, tags, $log) {
-
-  $scope.tags = tags;
-
-  $scope.deleteTag = function(index) {
-    tags.data.splice(index, 1);
-  }
-
-  $scope.addTag = function(index) {
-
-    tags.data.push(
-      $scope.selectFlores.originalObject
-    );
-    $scope.selectFlores = "";
-  }
-});
-
-drawApp.factory("tags", function() {
-  var tags = {};
-  tags.data = [];
-  return tags;
-});
-
-drawApp.factory("ZonesService", function($http) {
-
-  var config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
-
-  return {
-    post: function(callback, newZone) {
-      $http.post(apiUrl + "/zones", {
-        "zone": newZone,
-      }, config).success(function(data) {
-        var zone = data;
-        callback(null, zone);
-      }).error(function(error) {
-        callback(error);
       });
-    }
-  };
-});
+      map.addControl(drawControl);
 
-drawApp.factory("FloreService", function($http) {
 
-  var config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
 
-  return {
-    getEspece: function(callback) {
-      $http.get(apiUrl + "/flores/espece", config).success(function(data) {
-        var zone = data;
-        callback(null, zone);
-      }).error(function(error) {
-        callback(error);
+    map.on('draw:edited', function(e) {
+
+
+        console.log(e.layers.toGeoJSON());
       });
-    }
-  };
-});
 
 
-drawApp.factory("DrawService", function($http) {
-
-  var config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
-  return {
-    postZone: function(callback, zone) {
-      $http.post("http://localhost:3000/draw/locZone", {
-        "zone": zone
-      }, config).success(function(data) {
-
-        callback(null, data);
-      }).error(function(error) {
-        callback(error);
+      map.on('draw:created', function(e) {
+        var layer = e.layer;
+        drawnItems.addLayer(layer);
+        console.log(layer.toGeoJSON());
       });
-    }
+
+
+    });
+
+
   };
+
 });
+
 
 drawApp.factory("ZonesService", function($http) {
 
@@ -272,42 +199,18 @@ drawApp.factory("ZonesService", function($http) {
   };
 });
 
-
-
-/////////////////////////////////////////
-////////// Draw Control ////////////////
-////////////////////////////////////////
-//  $scope.controls = {};
-
-//  $scope.controls.draw = {};
-
-//  leafletData.getMap().then(function(map) {
-//    var drawnItems = $scope.controls.edit.featureGroup;
-
-//    L.geoJson(zonesTalus).addTo(map);
-
-//    map.on('draw:created', function(e) {
-//      var layer = e.layer;
-
-//      drawnItems.addLayer(layer);
-// //
-
-
-//      var newZone = layer.toGeoJSON();
-//      newZone.properties.commune = "Les clees";
-//      console.log(newZone);
-//       console.log(newZone.type);
-//      console.log(newZone.properties);
-
-//     console.log(JSON.stringify(newZone));
-
-//      // var callback = function(error, zoneSaved) {
-//      //   if (error) {
-//      //     $scope.error = error;
-//      //   }
-//      //   console.log(zoneSaved);
-//      //       }
-//   ZoneService.post(callback, newZone);
-// };
-//    });
-//  });
+drawApp.directive('ngConfirmClick', [
+  function() {
+    return {
+      link: function(scope, element, attr) {
+        var msg = attr.ngConfirmClick || "Are you sure?";
+        var clickAction = attr.confirmedClick;
+        element.bind('click', function(event) {
+          if (window.confirm(msg)) {
+            scope.$eval(clickAction)
+          }
+        });
+      }
+    };
+  }
+])

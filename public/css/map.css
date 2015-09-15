@@ -20,6 +20,27 @@ body {
   white-space: nowrap;
   width: 100%;
 }
+
+
+.edit {
+  background-color: #eb675e;
+  border-color: #eb675e;
+  color: #fff;
+  -moz-user-select: none;
+  background-image: none;
+  margin-bottom: 0.2em;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857;
+  padding: 6px 12px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 100%;
+}
+
 .dlPdf a {
   color: #fff;
 }
@@ -172,6 +193,24 @@ li {
   color: #555;
   font-size: 14px;
 }
+
+#edition {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  background: #f9264c;
+  border: solid 1px;
+  height: 5%;
+  width: 85%;
+  text-align:center;
+  background-color: #ffae4c;
+  background-image: none;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  color: #fff;
+  font-size: 28px;
+}
+
 #infoCommunes {
   position: absolute;
   bottom: 5%;
