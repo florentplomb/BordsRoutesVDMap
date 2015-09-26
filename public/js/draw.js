@@ -61,7 +61,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
       $scope.error = error;
     }
 
-
+    $scope.lines = zones;
     leafletData.getMap().then(function(map) {
 
       $scope.layerzones = L.geoJson(zones, {
@@ -134,9 +134,14 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
   });
 
   $scope.editGeom = function() {
+    $scope.polygon = {};
     $scope.editMode = true;
 
     leafletData.getMap().then(function(map) {
+
+      map.eachLayer(function(layer) {
+                    map.removeLayer(layer);
+      });
 
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
@@ -146,28 +151,29 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
         edit: {
           featureGroup: drawnItems
         },
-         draw: {
-        polyline: false,
-        rectangle :false,
-        circle : false,
-        marker : false
-    }
+        draw: {
+          polyline: false,
+          rectangle: false,
+          circle: false,
+          marker: false
+        }
       });
       map.addControl(drawControl);
 
+      map.on('draw:edited', function(e) {
 
+        console.log("edited" + $scope.IdLayerCliked + e.layers.toGeoJSON());
 
-    map.on('draw:edited', function(e) {
-
-
-        console.log(e.layers.toGeoJSON());
       });
-
 
       map.on('draw:created', function(e) {
         var layer = e.layer;
         drawnItems.addLayer(layer);
-        console.log(layer.toGeoJSON());
+        console.log("created" + $scope.IdLayerCliked + layer.toGeoJSON());
+      });
+
+      map.on('draw:deleted', function(e) {
+        console.log("delete" + $scope.IdLayerCliked + layer.toGeoJSON());
       });
 
 
