@@ -10,7 +10,7 @@ var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
-drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, ZonesService) {
+drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, ZonesService,PolygonService) {
 
 
   // Variable AngularsJs SCOPE //
@@ -18,6 +18,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
   $scope.map = {};
   $scope.infoZone = {};
   $scope.IdLayerCliked = -1;
+  $scope.zoneClicked = {};
   $scope.editMode = false;
   $scope.controls = {};
   $scope.controls.draw = {
@@ -74,8 +75,10 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
           layer.on('click', function(e) {
 
+            $scope.zoneClicked = feature
+
             highlightLayer(layer._leaflet_id);
-            console.log(layer);
+
 
 
             var idZone = feature.properties.ID_MAPINFO;
@@ -114,7 +117,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
       L.control.layers({
         'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
       }, {
-        'Lignes': $scope.layerzones
+        'Lignes': $scope.layerzones.addTo(map)
       }).addTo(map);
 
       var highlightLayer = function(layerID) {
@@ -135,12 +138,18 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
   $scope.editGeom = function() {
     $scope.polygon = {};
+
+    $scope.polygon.lineId = $scope.zoneClicked._id;
+
     $scope.editMode = true;
+
 
     leafletData.getMap().then(function(map) {
 
       map.eachLayer(function(layer) {
-                    map.removeLayer(layer);
+
+        layer.off('click');
+
       });
 
       var drawnItems = new L.FeatureGroup();
@@ -162,26 +171,57 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
       map.on('draw:edited', function(e) {
 
-        console.log("edited" + $scope.IdLayerCliked + e.layers.toGeoJSON());
+        var layers = e.layers;
+        layers.eachLayer(function(layer) {
+          $scope.polygon.geometry = layer.toGeoJSON().geometry;
+        });
 
       });
 
       map.on('draw:created', function(e) {
         var layer = e.layer;
         drawnItems.addLayer(layer);
-        console.log("created" + $scope.IdLayerCliked + layer.toGeoJSON());
+        console.log(layer.toGeoJSON().geometry);
+        $scope.polygon.geometry = layer.toGeoJSON().geometry
       });
-
-      map.on('draw:deleted', function(e) {
-        console.log("delete" + $scope.IdLayerCliked + layer.toGeoJSON());
-      });
-
-
     });
-
-
   };
 
+  $scope.postPolygon = function() {
+
+    var cb = function(err, zoneSaved) {
+         if (err) {
+      $scope.error = err;
+    }else{
+       console.log("SUCESS"+zoneSaved)
+    }
+
+    }
+
+    PolygonService.post(cb, $scope.polygon);
+  }
+
+});
+
+drawApp.factory("PolygonService", function($http) {
+
+  var config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return {
+    post: function(callback, newPoly) {
+      $http.post(apiUrl + "/polygons/fromline", {
+        "polygon": newPoly,
+      }, config).success(function(data) {
+        var poly = data;
+        callback(null, poly);
+      }).error(function(error) {
+        callback(error);
+      });
+    }
+  };
 });
 
 

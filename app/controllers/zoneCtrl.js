@@ -44,8 +44,6 @@ router.route('/')
       geom.type = "LineString";
       geom.coordinates = req.body.zone.geometry.coordinates
 
-
-
       var newZone = new Zone();
 
       newZone.properties = req.body.zone.properties;
@@ -78,6 +76,7 @@ router.route('/:id')
       });
 
   });
+
 
 router.route('/info')
   .get(function(req, res, next) {

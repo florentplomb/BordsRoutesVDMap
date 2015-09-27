@@ -81,9 +81,14 @@
 
         </div>
     </div>
+
     <div id="credit">
         Author : <a href="mailto:plombfg@gmail.com">F.Plomb</a>
     </div>
+
+     <button id="confirm" confirmed-click="postPolygon()" ng-confirm-click="Etes vous sûr de vouloir enregistré ce polygon ?">
+        Confirmer
+    </button>
 <div ng-show="editMode" id="edition">
 	Mode édition
 </div>
@@ -91,7 +96,7 @@
     <div  id="info">
         <div class="titreInfo"> Informations </div>
         <div ng-show="infoZone.id" class="dlPdf"><a TARGET="_blank" ng-href="http://www.humagis.ch/~jomtalus/PDF/F{{infoZone.id}}.pdf">Download PDF</a> </div>
-          <button class="edit" confirmed-click="editGeom()"  ng-confirm-click="Etes vous sûre de vouloir modifier la géométrie de cette zone ?">Modifier la géométrie</button>
+          <button class="edit" confirmed-click="editGeom()"  ng-confirm-click="Etes vous sûr de vouloir modifier la géométrie de cette zone ?">Modifier la géométrie</button>
         <div class="titre margeTop"><img id="mapIcon" src='/img/loc.png' alt='Commune' width='26' height='26' align='top' /> Commune(s)
         </div>
         <div id="LocCommunes" ng-repeat="commune in infoZone.commune">

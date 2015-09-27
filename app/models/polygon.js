@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var PolygonSchema = new Schema({
- type: String,
+ type: {type: String, default: "Feature"},
  properties: {
  	flores: [ { type: Schema.Types.ObjectId, ref: 'Flore' } ],
  	communes: [ { type: Schema.Types.ObjectId, ref: 'Commune' } ],
