@@ -59,6 +59,9 @@ router.route("/fromline")
     .exec(function(err, zone) {
       if (err) return res.status(400).json("zone introuvable");
       polygon.properties = zone.properties;
+
+      console.log(polygon.properties);
+
       polygon.geometry = req.body.polygon.geometry;
 
       polygon.save(function(err, poly) {

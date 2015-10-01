@@ -79,8 +79,6 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
             highlightLayer(layer._leaflet_id);
 
-
-
             var idZone = feature.properties.ID_MAPINFO;
             if (idZone < 10) {
               $scope.infoZone.id = "0000" + idZone;
@@ -115,7 +113,8 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
       })
 
       L.control.layers({
-        'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+        'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'{minZoom: 5, maxZoom: 15 }).addTo(map)
+
       }, {
         'Lignes': $scope.layerzones.addTo(map)
       }).addTo(map);
@@ -143,12 +142,12 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
     $scope.editMode = true;
 
-
     leafletData.getMap().then(function(map) {
 
       map.eachLayer(function(layer) {
 
         layer.off('click');
+        layer.off('mouseover');
 
       });
 
@@ -171,13 +170,13 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
       map.on('draw:edited', function(e) {
 
+
         var layers = e.layers;
         layers.eachLayer(function(layer) {
           $scope.polygon.geometry = layer.toGeoJSON().geometry;
         });
 
       });
-
       map.on('draw:created', function(e) {
         var layer = e.layer;
         drawnItems.addLayer(layer);

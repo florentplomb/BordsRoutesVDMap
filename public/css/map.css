@@ -99,14 +99,10 @@ h4 {
   visibility: hidden;
 }
 #confirm {
-  padding-right: 10px;
-  position: fixed;
-  top: 180px;
-  width: auto ;
-  left: 1%;
   background-color: #9889f0;
   color: #ebebeb;
   font-size: 25px;
+  width: 100%;
 }
 #credit {
   padding-left: 2px;
@@ -167,7 +163,7 @@ li {
   border: solid 1px;
   padding: 1em;
 }
-#info {
+.info {
   position: absolute;
   top: 0%;
   right: 0%;

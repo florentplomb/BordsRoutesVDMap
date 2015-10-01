@@ -78,25 +78,21 @@
     <div id="map-wrapper">
         <div id="map">
             <leaflet center="map.center" width="100%" height="100%"></leaflet>
-
         </div>
     </div>
-
     <div id="credit">
         Author : <a href="mailto:plombfg@gmail.com">F.Plomb</a>
     </div>
-
-     <button id="confirm" confirmed-click="postPolygon()" ng-confirm-click="Etes vous sûr de vouloir enregistré ce polygon ?">
+    <button id="confirm" ng-show="editMode" confirmed-click="postPolygon()" ng-confirm-click="Etes vous sûr de vouloir enregistré ce polygon ?">
         Confirmer
     </button>
-<div ng-show="editMode" id="edition">
-	Mode édition
-</div>
-
-    <div  id="info">
+    <div ng-show="editMode" id="edition">
+        Mode édition
+    </div>
+    <div class="info">
         <div class="titreInfo"> Informations </div>
         <div ng-show="infoZone.id" class="dlPdf"><a TARGET="_blank" ng-href="http://www.humagis.ch/~jomtalus/PDF/F{{infoZone.id}}.pdf">Download PDF</a> </div>
-          <button class="edit" confirmed-click="editGeom()"  ng-confirm-click="Etes vous sûr de vouloir modifier la géométrie de cette zone ?">Modifier la géométrie</button>
+        <button class="edit" ng-show="infoZone.id" confirmed-click="editGeom()" ng-confirm-click="Etes vous sûr de vouloir modifier la géométrie de cette zone ?">Modifier la géométrie</button>
         <div class="titre margeTop"><img id="mapIcon" src='/img/loc.png' alt='Commune' width='26' height='26' align='top' /> Commune(s)
         </div>
         <div id="LocCommunes" ng-repeat="commune in infoZone.commune">
@@ -110,7 +106,15 @@
                     <p ng-show="fleur.espece == 'Aucune fleur répértoriée'">{{fleur.espece}}
             </div>
         </div>
-
+    </div>
+    <div class="info" ng-show="editMode">
+        <div class="titreInfo" style="background : red"> Edition </div>
+        <div style="font-size : 32px; padding: 0.2em;">Dessinez un polygon et veuillez confirmer votre saisie:</div>
+        <div style="text-align: center; font-size : 30px;">
+            <button ng-disabled="false" confirmed-click="postPolygon()" ng-confirm-click="Etes vous sûr de vouloir enregistré ce polygon ?">
+                Confirmer
+            </button>
+        </div>
     </div>
 </body>
 
