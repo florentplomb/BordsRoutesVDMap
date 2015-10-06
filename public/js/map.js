@@ -77,8 +77,28 @@ app.controller('MapCtrl', function($scope, $filter, ngDialog, leafletData, Zones
           name: 'Google Streets',
           layerType: 'ROADMAP',
           type: 'google'
+        }
+       },
+    overlayers: {
+      buildings: {
+        name: 'Buildings',
+        type: 'geoJSON',
+        url: 'http://tile.openstreetmap.us/vectiles-buildings/{z}/{x}/{y}.json',
+        layerOptions: {
+          style: {
+            "color": "#00D",
+            "fillColor": "#00D",
+            "weight": 1.0,
+            "opacity": 0.6,
+            "fillOpacity": .2
+          }
         },
-       }
+        pluginOptions: {
+          cliptiles: true
+        }
+      }
+
+    }
     }
 
 
