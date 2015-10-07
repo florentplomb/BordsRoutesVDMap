@@ -10,7 +10,7 @@ var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
-drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, ZonesService,PolygonService) {
+drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, ZonesService, PolygonService) {
 
 
   // Variable AngularsJs SCOPE //
@@ -57,13 +57,15 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
     zoom: 10
   };
 
-  ZonesService.get(function(error, zones) {
-    if (error) {
-      $scope.error = error;
-    }
+  leafletData.getMap().then(function(map) {
 
-    $scope.lines = zones;
-    leafletData.getMap().then(function(map) {
+    ZonesService.get(function(error, zones) {
+      if (error) {
+        $scope.error = error;
+      }
+
+      $scope.lines = zones;
+
 
       $scope.layerzones = L.geoJson(zones, {
         style: function(feature) {
@@ -77,7 +79,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
             $scope.zoneClicked = feature
 
-            highlightLayer(layer._leaflet_id);
+            highlightLayer(layer._leaflet_id, map);
 
             var idZone = feature.properties.ID_MAPINFO;
             if (idZone < 10) {
@@ -112,28 +114,106 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
         }
       })
 
-      L.control.layers({
-        'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'{minZoom: 5, maxZoom: 15 }).addTo(map)
 
-      }, {
-        'Lignes': $scope.layerzones.addTo(map)
-      }).addTo(map);
 
-      var highlightLayer = function(layerID) {
-        if ($scope.IdLayerCliked >= 0) {
+      PolygonService.get(function(error, polys) {
+        if (error) {
+          $scope.error = error;
+        }
 
-          map._layers[$scope.IdLayerCliked].setStyle(defaultStyle)
-          map._layers[layerID].setStyle(highlight);
-          $scope.IdLayerCliked = layerID;
-        } else {
-          map._layers[layerID].setStyle(highlight);
-          $scope.IdLayerCliked = layerID;
-        };
-      }
+        $scope.layerpoly = L.geoJson(polys, {
+          style: function(feature) {
+            return feature.properties.style;
+          },
+          onEachFeature: function(feature, layer) {
+
+            layer.setStyle(defaultStyle);
+
+            layer.on('click', function(e) {
+
+              console.log(layer);
+
+              highlightLayer(layer._leaflet_id, map);
+
+              if (feature.properties.flores && feature.properties.flores.length > 0) {
+
+                layer.on('click', function(e) {
+                  $scope.infoZone.commune = feature.properties.communes;
+                  $scope.infoZone.fleurs = feature.properties.flores;
+                });
+              } else {
+                layer.on('click', function(e) {
+                  $scope.infoZone.commune = feature.properties.communes;
+                  $scope.infoZone.fleurs = [{
+                    espece: "Aucune fleur répértoriée"
+                  }];
+
+                });
+              };
+
+
+            });
+
+
+          }
+        })
+
+
+        L.control.layers({
+          'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 25
+          }).addTo(map),
+          "googleSat": L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 25,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+          }),
+          "googleHybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+            maxZoom: 25,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+          }),
+          "googleTerrain": L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+            maxZoom: 25,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+          })
+
+        }, {
+          'Lignes': $scope.layerzones.addTo(map),
+          'Polys': $scope.layerpoly.addTo(map),
+        }).addTo(map);
+      });
+
+
 
     });
 
+    var highlightLayer = function(layerID) {
+
+      map.eachLayer(function(layer) {
+
+        if (layer.feature) {
+          layer.setStyle(defaultStyle);
+        };
+
+      });
+
+      if ($scope.IdLayerCliked >= 0) {
+
+        console.log($scope.IdLayerCliked);
+        console.log(map);
+        if (map._layers[$scope.IdLayerCliked]) {
+          map._layers[$scope.IdLayerCliked].setStyle(defaultStyle)
+        };
+        map._layers[layerID].setStyle(highlight);
+        $scope.IdLayerCliked = layerID;
+      } else {
+        map._layers[layerID].setStyle(highlight);
+        $scope.IdLayerCliked = layerID;
+      };
+    }
+
   });
+
+
 
   $scope.editGeom = function() {
     $scope.polygon = {};
@@ -189,11 +269,11 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
   $scope.postPolygon = function() {
 
     var cb = function(err, zoneSaved) {
-         if (err) {
-      $scope.error = err;
-    }else{
-       console.log("SUCESS"+zoneSaved)
-    }
+      if (err) {
+        $scope.error = err;
+      } else {
+        console.log("SUCESS" + zoneSaved)
+      }
 
     }
 
@@ -216,6 +296,14 @@ drawApp.factory("PolygonService", function($http) {
       }, config).success(function(data) {
         var poly = data;
         callback(null, poly);
+      }).error(function(error) {
+        callback(error);
+      });
+    },
+    get: function(callback) {
+      $http.get(apiUrl + "/polygons", config).success(function(data) {
+        var polys = data;
+        callback(null, polys);
       }).error(function(error) {
         callback(error);
       });
