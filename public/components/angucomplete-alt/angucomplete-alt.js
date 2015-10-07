@@ -49,7 +49,7 @@
     // Set the default template for this directive
     $templateCache.put(TEMPLATE_URL,
         '<div class="angucomplete-holder" ng-class="{\'angucomplete-dropdown-visible\': showDropdown}">' +
-        '  <input id="{{id}}_value" ng-model="searchStr" ng-disabled="disableInput" type="{{type}}" placeholder="{{placeholder}}" maxlength="{{maxlength}}" ng-focus="onFocusHandler()" class="{{inputClass}}" ng-focus="resetHideResults()" ng-blur="hideResults($event)" autocapitalize="off" autocorrect="off" autocomplete="off" ng-change="inputChangeHandler(searchStr)"/>' +
+        '  <input id="{{id}}_value" name={{inputName}} ng-class="{\'angucomplete-input-not-empty\': notEmpty}" ng-model="searchStr" ng-disabled="disableInput" type="{{type}}" placeholder="{{placeholder}}" maxlength="{{maxlength}}" ng-focus="onFocusHandler()" class="{{inputClass}}" ng-focus="resetHideResults()" ng-blur="hideResults($event)" autocapitalize="off" autocorrect="off" autocomplete="off" ng-change="inputChangeHandler(searchStr)"/>' +
         '  <div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-show="showDropdown">' +
         '    <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>' +
         '    <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>' +
@@ -79,6 +79,7 @@
         remoteUrlRequestWithCredentials: '@',
         remoteUrlResponseFormatter: '=',
         remoteUrlErrorCallback: '=',
+        remoteApiHandler: '=',
         id: '@',
         type: '@',
         placeholder: '@',
@@ -99,7 +100,8 @@
         inputChanged: '=',
         autoMatch: '@',
         focusOut: '&',
-        focusIn: '&'
+        focusIn: '&',
+        inputName: '@'
       },
       templateUrl: function(element, attrs) {
         return attrs.templateUrl || TEMPLATE_URL;
@@ -119,7 +121,12 @@
         var unbindInitialValue;
 
         elem.on('mousedown', function(event) {
-          mousedownOn = event.target.id;
+          if (event.target.id) {
+            mousedownOn = event.target.id;
+          }
+          else {
+            mousedownOn = event.target.className;
+          }
         });
 
         scope.currentIndex = null;
@@ -134,15 +141,10 @@
         });
 
         scope.$on('angucomplete-alt:clearInput', function (event, elementId) {
-          if (!elementId) {
+          if (!elementId || elementId === scope.id) {
             scope.searchStr = null;
+            handleRequired(false);
             clearResults();
-          }
-          else { // id is given
-            if (scope.id === elementId) {
-              scope.searchStr = null;
-              clearResults();
-            }
           }
         });
 
@@ -222,6 +224,7 @@
         }
 
         function handleRequired(valid) {
+          scope.notEmpty = valid;
           validState = scope.searchStr;
           if (scope.fieldRequired && ctrl) {
             ctrl.$setValidity(requiredClassName, valid);
@@ -402,6 +405,10 @@
 
         function httpSuccessCallbackGen(str) {
           return function(responseData, status, headers, config) {
+            // normalize return obejct from promise
+            if (!status && !headers && !config) {
+              responseData = responseData.data;
+            }
             scope.searching = false;
             processResults(
               extractValue(responseFormatter(responseData), scope.remoteUrlDataField),
@@ -410,6 +417,10 @@
         }
 
         function httpErrorCallback(errorRes, status, headers, config) {
+          // normalize return obejct from promise
+          if (!status && !headers && !config) {
+            status = errorRes.status;
+          }
           if (status !== 0) {
             if (scope.remoteUrlErrorCallback) {
               scope.remoteUrlErrorCallback(errorRes, status, headers, config);
@@ -444,6 +455,16 @@
           $http.get(url, params)
             .success(httpSuccessCallbackGen(str))
             .error(httpErrorCallback);
+        }
+
+        function getRemoteResultsWithCustomHandler(str) {
+          cancelHttpRequest();
+
+          httpCanceller = $q.defer();
+
+          scope.remoteApiHandler(str, httpCanceller.promise)
+            .then(httpSuccessCallbackGen(str))
+            .catch(httpErrorCallback);
         }
 
         function clearResults() {
@@ -483,6 +504,7 @@
         }
 
         function checkExactMatch(result, obj, str){
+          if (!str) { return; }
           for(var key in obj){
             if(obj[key].toLowerCase() === str.toLowerCase()){
               scope.selectResult(result);
@@ -501,7 +523,9 @@
               getLocalResults(str);
             });
           }
-          else {
+          else if (scope.remoteApiHandler) {
+            getRemoteResultsWithCustomHandler(str);
+          } else {
             getRemoteResults(str);
           }
         }
@@ -554,6 +578,9 @@
           if (scope.localData) {
             processResults(scope.localData, '');
           }
+          else if (scope.remoteApiHandler) {
+            getRemoteResultsWithCustomHandler('');
+          }
           else {
             getRemoteResults('');
           }
@@ -570,7 +597,7 @@
         };
 
         scope.hideResults = function(event) {
-          if (mousedownOn === scope.id + '_dropdown') {
+          if (mousedownOn && mousedownOn.indexOf('angucomplete') >= 0) {
             mousedownOn = null;
           }
           else {
@@ -673,6 +700,8 @@
             handleRequired(false);
           }
         }
+
+        scope.type = attrs.type ? attrs.type : 'text';
 
         // set strings for "Searching..." and "No results"
         scope.textSearching = attrs.textSearching ? attrs.textSearching : TEXT_SEARCHING;

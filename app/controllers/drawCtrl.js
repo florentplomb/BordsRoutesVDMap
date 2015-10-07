@@ -18,6 +18,8 @@ router.route('/')
 	});
 
 
+
+
 router.route('/locZone')
 	.post(function(req, res, next) {
 

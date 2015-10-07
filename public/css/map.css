@@ -87,16 +87,6 @@ body {
   margin: 0px;
   padding: 0px;
 }
-.angular-leaflet-control-layers {
-  position: absolute;
-  background: white;
-  z-index: 100;
-  left: 10px;
-  top: 100px;
-  width: 200px;
-  box-shadow: 1px 1px 5px #333;
-  padding: 5px;
-}
 #ex1 {
   margin-bottom: 1em;
 }
@@ -115,9 +105,6 @@ h4 {
   color: #949494;
   text-decoration: none;
   outline: 0;
-}
-.leaflet-container .leaflet-control-attribution {
-  visibility: hidden;
 }
 #confirm {
   background-color: #9889f0;
