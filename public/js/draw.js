@@ -34,22 +34,30 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
   // Variable JS //
 
-  var defaultStyle = {
+  var lineStyle = {
     color: "#c5128a", // #02a6a6 //#ff7e61 //#d87c50 //#256aa6
     weight: 6,
     opacity: 0.7,
-
     fillColor: "blue"
+  };
+
+  var polyStyle = {
+    color: "#eca91e", // #02a6a6 //#ff7e61 //#d87c50 //#256aa6 // #eca91e
+    weight: 2,
+    fill: true,
+    fillOpacity: 0.5,
+    opacity: 1,
+
   };
   var highlightStyle = {
     color: '#1072ac',
   };
 
-  var highlight = {
-    color: "#0000ff",
-    opacity: 1
+  // var highlight = {
+  //   color: "#0000ff",
+  //   opacity: 1
 
-  };
+  // };
 
   $scope.map.center = {
     lat: 46.841759385352,
@@ -59,6 +67,27 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
   leafletData.getMap().then(function(map) {
 
+    //     map.on('overlayadd', function(layer) {
+    //     console.log(e);
+    // });
+
+    map.on('overlayremove', function(layerRemove) {
+      layerRemove.layer.eachLayer(function(layer) {
+
+        if (layer.feature.geometry.type == "Polygon") {
+
+          layer.setStyle(polyStyle);
+
+        } else {
+
+          layer.setStyle(lineStyle);
+        }
+
+      });
+    });
+
+
+
     ZonesService.get(function(error, zones) {
       if (error) {
         $scope.error = error;
@@ -66,52 +95,40 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
       $scope.lines = zones;
 
-
       $scope.layerzones = L.geoJson(zones, {
         style: function(feature) {
           return feature.properties.style;
         },
         onEachFeature: function(feature, layer) {
 
-          layer.setStyle(defaultStyle);
+          layer.setStyle(lineStyle);
 
           layer.on('click', function(e) {
+            layerDefaultStyle();
+            e.target.setStyle(highlightStyle);
+            $scope.zoneClicked = e.target._leaflet_id;
 
-            $scope.zoneClicked = feature
 
-            highlightLayer(layer._leaflet_id, map);
-
-            var idZone = feature.properties.ID_MAPINFO;
-            if (idZone < 10) {
-              $scope.infoZone.id = "0000" + idZone;
-            } else if (idZone < 99) {
-
-              $scope.infoZone.id = "000" + idZone;
-
-            } else {
-              $scope.infoZone.id = "00" + idZone;
-            }
-
-          });
 
           if (feature.properties.flores && feature.properties.flores.length > 0) {
 
-            layer.on('click', function(e) {
-              $scope.infoZone.commune = feature.properties.communes;
-              $scope.infoZone.fleurs = feature.properties.flores;
-            });
+            $scope.infoZone.commune = feature.properties.communes;
+            $scope.infoZone.fleurs = feature.properties.flores;
+
           } else {
-            layer.on('click', function(e) {
-              $scope.infoZone.commune = feature.properties.communes;
-              $scope.infoZone.fleurs = [{
-                espece: "Aucune fleur répértoriée"
-              }];
 
-            });
+            $scope.infoZone.commune = feature.properties.communes;
+            $scope.infoZone.fleurs = [{
+              espece: "Aucune fleur répértoriée"
+            }];
+
+
           };
-
+     });
 
         }
+
+
       })
 
 
@@ -127,28 +144,40 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
           },
           onEachFeature: function(feature, layer) {
 
-            layer.setStyle(defaultStyle);
+            layer.setStyle(polyStyle);
 
             layer.on('click', function(e) {
 
-              console.log(layer);
 
-              highlightLayer(layer._leaflet_id, map);
+              layerDefaultStyle();
+              e.target.setStyle(highlightStyle);
+              $scope.zoneClicked = e.target._leaflet_id;
+
+
+              var idZone = feature.properties.ID_MAPINFO;
+              if (idZone < 10) {
+                $scope.infoZone.id = "0000" + idZone;
+              } else if (idZone < 99) {
+
+                $scope.infoZone.id = "000" + idZone;
+
+              } else {
+                $scope.infoZone.id = "00" + idZone;
+              }
+
 
               if (feature.properties.flores && feature.properties.flores.length > 0) {
+                $scope.infoZone.commune = feature.properties.communes;
+                $scope.infoZone.fleurs = feature.properties.flores;
 
-                layer.on('click', function(e) {
-                  $scope.infoZone.commune = feature.properties.communes;
-                  $scope.infoZone.fleurs = feature.properties.flores;
-                });
               } else {
-                layer.on('click', function(e) {
-                  $scope.infoZone.commune = feature.properties.communes;
-                  $scope.infoZone.fleurs = [{
-                    espece: "Aucune fleur répértoriée"
-                  }];
 
-                });
+                $scope.infoZone.commune = feature.properties.communes;
+                $scope.infoZone.fleurs = [{
+                  espece: "Aucune fleur répértoriée"
+                }];
+
+
               };
 
 
@@ -160,13 +189,13 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
 
         L.control.layers({
-          'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 25
-          }).addTo(map),
+          // 'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          //   maxZoom: 25
+          // }).addTo(map),
           "googleSat": L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             maxZoom: 25,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-          }),
+          }).addTo(map),
           "googleHybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
             maxZoom: 25,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
@@ -186,29 +215,46 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
     });
 
-    var highlightLayer = function(layerID) {
+    var layerDefaultStyle = function() {
 
-      map.eachLayer(function(layer) {
 
-        if (layer.feature) {
-          layer.setStyle(defaultStyle);
-        };
+      if (map._layers[$scope.zoneClicked]) {
+        if (map._layers[$scope.zoneClicked].feature.geometry.type == "Polygon") {
 
-      });
-
-      if ($scope.IdLayerCliked >= 0) {
-
-        console.log($scope.IdLayerCliked);
-        console.log(map);
-        if (map._layers[$scope.IdLayerCliked]) {
-          map._layers[$scope.IdLayerCliked].setStyle(defaultStyle)
-        };
-        map._layers[layerID].setStyle(highlight);
-        $scope.IdLayerCliked = layerID;
-      } else {
-        map._layers[layerID].setStyle(highlight);
-        $scope.IdLayerCliked = layerID;
+      console.log("ho");
+          map._layers[$scope.zoneClicked].setStyle(polyStyle);
+        } else {
+          map._layers[$scope.zoneClicked  ].setStyle(lineStyle);
+        }
       };
+
+      //   map.eachLayer(function(layer) {
+
+      //     if (layer.feature) {
+
+      //       if (layer.feature.geometry.type == "Polygon") {
+
+      //         layer.setStyle(polyStyle);
+
+      //       } else {
+
+      //         layer.setStyle(lineStyle);
+      //       }
+      //     };
+
+      //   });
+
+      //   if ($scope.IdLayerCliked >= 0) {
+
+      //     if (map._layers[$scope.IdLayerCliked]) {
+      //       map._layers[$scope.IdLayerCliked].setStyle(highlightStyle);
+      //     };
+      //     map._layers[layerID].setStyle(highlightStyle);
+      //     $scope.IdLayerCliked = layerID;
+      //   } else {
+      //     map._layers[layerID].setStyle(highlightStyle);
+      //     $scope.IdLayerCliked = layerID;
+      //   };
     }
 
   });
