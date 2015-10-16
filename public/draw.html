@@ -32,48 +32,50 @@
     <link href="css/map.css" rel="stylesheet" />
     <!-- your app's js -->
     <script src="js/draw.js"></script>
-  <script type="text/ng-template" id="templateId">
-
-            <form>
-                <div class="form-group">
-                    <div ng-controller="TagsController">
-                        <label for="exampleInputEmail1">Espèce(s) observée(s):</label>
-                        <div>
-                            <angucomplete-alt id="ex2" placeholder="Indiquez le nom d'une fleur" pause="100" selected-object="selectFlores" local-data="especesName" search-fields="espece" title-field="espece" minlength="1" input-class="form-control form-control-small" match-class="highlight" />
-                        </div>
-                        <button id="addFlower" ng-disabled="!selectFlores" type="button" class="btn btn-success" ng-click="addTag()">Ajouter</button>
-                        <ul id="tag" class="nav item">
-                            <div id="newEsp" ng-show="tags.data.length">
-                                <li ng-repeat="tag in tags.data track by $index | limitTo: 3">
-                                    <span>- {{tag.espece}}</span>
-                                </li>
-                            </div>
-                        </ul>
-                    </div>
-                    <label for="exampleInputEmail1">Commune(s):</label>
+    <script type="text/ng-template" id="templateId">
+        <form>
+            <div class="form-group">
+                <div ng-controller="TagsController">
+                    <label for="exampleInputEmail1">Espèce(s) observée(s):</label>
                     <div>
-                        <ul id="tag" class="nav item">
-                            <div id="newCom" ng-show="communeName.length">
-                                <li ng-repeat="commune in  communeName">
-                                    <span>- {{commune.properties.NAME}}</span>
-                                </li>
-                            </div>
-                        </ul>
+                        <angucomplete-alt id="ex2" placeholder="Indiquez le nom d'une fleur" pause="100" selected-object="selectFlores" local-data="especesName" search-fields="espece" title-field="espece" minlength="1" input-class="form-control form-control-small" match-class="highlight" />
                     </div>
-                    <label for="exampleInputEmail1">Fiabilité:</label>
-                    <input type="text" class="form-control" ng-model="polyEditedData.properties.FIABILITE" id="exampleInputEmail1" placeholder="Entrer une Fiabilité">
-                    <label for="exampleInputEmail1">Type:</label>
-                    <input type="text" class="form-control" ng-model="polyEditedData.properties.TYPE" id="exampleInputEmail1" placeholder="Entrer un type">
-                    <label for="exampleInputEmail1">Description:</label>
-                    <textarea type="text" class="form-control" ng-model="polyEditedData.properties.DESCRIPTIO" id="exampleInputEmail1" placeholder="Entrer une description"></textarea>
-                    <label for="exampleInputEmail1">Entretien:</label>
-                    <textarea type="text" class="form-control" ng-model="polyEditedData.properties.ENTRETIEN" id="exampleInputEmail1" placeholder="Entrer un état sur l'entretien"></textarea>
-                    <button id="send" type="submit" type="button" class="btn btn-primary" ng-click=" closeThisDialog('Cancel'); storeZone();  ">Envoyer</button>
+                    <button id="addFlower" ng-disabled="!selectFlores" type="button" class="btn btn-success" ng-click="addTag()">Ajouter</button>
+                    <ul id="tag" class="nav item">
+                        <div id="newEsp" ng-show="tags.data.length">
+                            <li ng-repeat="tag in tags.data track by $index | limitTo: 3">
+                                <span>- {{tag.espece}}</span>
+                                <button ng-click="deleteTag()" type="button" class="btn">delete</button>
+                            </li>
+                        </div>
+                    </ul>
                 </div>
-            </form>
-        </script>
+                <label for="exampleInputEmail1">Commune(s):</label>
+                <div>
+                    <ul id="tag" class="nav item">
+                        <div id="newCom" ng-show="communeName.length">
+                            <li ng-repeat="commune in  communeName">
+                                <span>- {{commune.properties.NAME}}</span>
+                            </li>
+                        </div>
+                    </ul>
+                </div>
+                <label for="exampleInputEmail1">Fiabilité:</label>
+                <input type="text" class="form-control" ng-model="polyEditedData.properties.FIABILITE" id="exampleInputEmail1" placeholder="Entrer une Fiabilité">
+                <label for="exampleInputEmail1">Cantonale :</label>
+                <input type="text" class="form-control" ng-model="polyEditedData.properties.CANTONALE" id="exampleInputEmail1" placeholder="Entrer une Fiabilité">
+                <label for="exampleInputEmail1">Type:</label>
+                <input type="text" class="form-control" ng-model="polyEditedData.properties.TYPE" id="exampleInputEmail1" placeholder="Entrer un type">
+                <label for="exampleInputEmail1">Description:</label>
+                <textarea type="text" class="form-control" ng-model="polyEditedData.properties.DESCRIPTIO" id="exampleInputEmail1" placeholder="Entrer une description"></textarea>
+                <label for="exampleInputEmail1">Entretien:</label>
+                <textarea type="text" class="form-control" ng-model="polyEditedData.properties.ENTRETIEN" id="exampleInputEmail1" placeholder="Entrer un état sur l'entretien"></textarea>
+                <div>Plumettaz: {{polyEditedData.properties.PLUMETTAZ}}</div>
+                <button id="send" type="submit" type="button" class="btn btn-primary" ng-click="closeThisDialog('Cancel'); storeEditPolyData();  ">Envoyer</button>
+            </div>
+        </form>
+    </script>
     <script type="text/ng-template" id="pop.html">
-
     </script>
 </head>
 

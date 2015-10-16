@@ -17,7 +17,8 @@ var PolygonSchema = new Schema({
     CANTONALE : String,
     DESCRIPTIO : String,
     ENTRETIEN : String,
-    created_at : {type: Date, default: Date.now}
+    created_at : {type: Date, default: Date.now},
+    lastUpdate_at : {type: Date, default: Date.now}
  },
  geometry: Schema.Types.Mixed,
 

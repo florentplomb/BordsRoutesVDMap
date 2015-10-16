@@ -10,11 +10,12 @@ var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
-drawApp.controller('DrawCtrl', function($scope, $filter, tags, leafletData, ngDialog, ZonesService, PolygonService) {
+drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, ZonesService, PolygonService) {
 
 
   // Variable AngularsJs SCOPE //
-  tags.data = [];
+  $scope.tags = {};
+  $scope.tags.data = [];
   $scope.map = {};
   $scope.polyEditedData = {};
   $scope.currentFeature = {};
@@ -23,7 +24,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, tags, leafletData, ngDi
   $scope.featureClickedIdLeaflet = {};
   $scope.editMode = false;
   $scope.controls = {};
-  $scope.tags = [];
+
   $scope.controls.draw = {
     polyline: {
       shapeOptions: {
@@ -251,14 +252,35 @@ drawApp.controller('DrawCtrl', function($scope, $filter, tags, leafletData, ngDi
 
   $scope.editData = function() {
 
-
     $scope.polyEditedData = $scope.currentFeature;
+
+    $scope.tags.data = $scope.polyEditedData.properties.flores;
+    var floresId = [];
+    angular.forEach($scope.polyEditedData.properties.flores, function(item, key) {
+      floresId.push(item._id);
+    })
+    console.log(floresId);
+    console.log($scope.polyEditedData);
     ngDialog.open({
       template: 'templateId',
-      scope : $scope
+      scope: $scope
     });
 
+    $scope.polyEditedData.properties.flores = floresId;
+    $scope.storeEditPolyData = function() {
 
+      var cb = function(err, zoneSaved) {
+        if (err) {
+          $scope.error = err;
+        } else {
+          console.log("SUCESS" + zoneSaved)
+        }
+
+      }
+
+      PolygonService.postData(cb, $scope.polyEditedData);
+
+    }
 
   }
 
@@ -324,7 +346,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, tags, leafletData, ngDi
 
     }
 
-    PolygonService.post(cb, $scope.polygon);
+    PolygonService.postData(cb, $scope.polygon);
   }
 
 });
@@ -347,6 +369,16 @@ drawApp.factory("PolygonService", function($http) {
         callback(error);
       });
     },
+    postData: function(callback, polyEdited) {
+      $http.post(apiUrl + "/polygons/updateData", {
+        "polygon": polyEdited,
+      }, config).success(function(data) {
+        var poly = data;
+        callback(null, poly);
+      }).error(function(error) {
+        callback(error);
+      });
+    },
     get: function(callback) {
       $http.get(apiUrl + "/polygons", config).success(function(data) {
         var polys = data;
@@ -358,16 +390,16 @@ drawApp.factory("PolygonService", function($http) {
   };
 });
 
-drawApp.controller('TagsController', function($scope, $rootScope, tags, $log) {
+drawApp.controller('TagsController', function($scope, $rootScope, $log) {
 
 
   $scope.deleteTag = function(index) {
-    tags.data.splice(index, 1);
+    $scope.tags.data.splice(index, 1);
   }
 
   $scope.addTag = function(index) {
 
-    tags.data.push(
+    $scope.tags.data.push(
       $scope.selectFlores.originalObject
     );
     $scope.selectFlores = "";
@@ -375,11 +407,6 @@ drawApp.controller('TagsController', function($scope, $rootScope, tags, $log) {
 });
 
 
-drawApp.factory("tags", function() {
-  var tags = {};
-  tags.data = [];
-  return tags;
-});
 
 
 drawApp.factory("ZonesService", function($http) {

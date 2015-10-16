@@ -136,7 +136,7 @@ h4 {
 }
 .ngdialog.ngdialog-theme-default .ngdialog-content {
   width: 55%;
-  height: 600px;
+  height: auto;
 }
 .margeTop {
   margin-top: 1em;
