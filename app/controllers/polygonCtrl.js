@@ -55,6 +55,8 @@ router.route("/fromline")
 
     var polygon = new Polygon();
 
+    console.log(req.body.polygon.lineId);
+
     Zone.findById(req.body.polygon.lineId)
       .select("properties")
       .exec(function(err, zone) {

@@ -10,17 +10,20 @@ var underscore = angular.module('underscore', []);
 underscore.factory('_', function() {
   return window._; // assumes underscore has already been loaded on the page
 });
-drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, ZonesService, PolygonService) {
+drawApp.controller('DrawCtrl', function($scope, $filter, tags, leafletData, ngDialog, ZonesService, PolygonService) {
 
 
   // Variable AngularsJs SCOPE //
-
+  tags.data = [];
   $scope.map = {};
+  $scope.polyEditedData = {};
+  $scope.currentFeature = {};
   $scope.infoZone = {};
   $scope.IdLayerCliked = -1;
-  $scope.zoneClicked = {};
+  $scope.featureClickedIdLeaflet = {};
   $scope.editMode = false;
   $scope.controls = {};
+  $scope.tags = [];
   $scope.controls.draw = {
     polyline: {
       shapeOptions: {
@@ -106,25 +109,35 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
           layer.on('click', function(e) {
             layerDefaultStyle();
             e.target.setStyle(highlightStyle);
-            $scope.zoneClicked = e.target._leaflet_id;
+            $scope.currentFeature = e.target.feature;
+            $scope.featureClickedIdLeaflet = e.target._leaflet_id;
 
 
+            var idZone = feature.properties.ID_MAPINFO;
+            if (idZone < 10) {
+              $scope.infoZone.id = "0000" + idZone;
+            } else if (idZone < 99) {
 
-          if (feature.properties.flores && feature.properties.flores.length > 0) {
+              $scope.infoZone.id = "000" + idZone;
 
-            $scope.infoZone.commune = feature.properties.communes;
-            $scope.infoZone.fleurs = feature.properties.flores;
+            } else {
+              $scope.infoZone.id = "00" + idZone;
+            }
+            if (feature.properties.flores && feature.properties.flores.length > 0) {
 
-          } else {
+              $scope.infoZone.commune = feature.properties.communes;
+              $scope.infoZone.fleurs = feature.properties.flores;
 
-            $scope.infoZone.commune = feature.properties.communes;
-            $scope.infoZone.fleurs = [{
-              espece: "Aucune fleur répértoriée"
-            }];
+            } else {
+
+              $scope.infoZone.commune = feature.properties.communes;
+              $scope.infoZone.fleurs = [{
+                espece: "Aucune fleur répértoriée"
+              }];
 
 
-          };
-     });
+            };
+          });
 
         }
 
@@ -148,10 +161,13 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
             layer.on('click', function(e) {
 
+              $scope.currentFeature = e.target.feature;
+
+              $scope.editDataOn = true;
 
               layerDefaultStyle();
               e.target.setStyle(highlightStyle);
-              $scope.zoneClicked = e.target._leaflet_id;
+              $scope.featureClickedIdLeaflet = e.target._leaflet_id;
 
 
               var idZone = feature.properties.ID_MAPINFO;
@@ -189,9 +205,9 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
 
         L.control.layers({
-          // 'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          //   maxZoom: 25
-          // }).addTo(map),
+          'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 25
+          }).addTo(map),
           "googleSat": L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             maxZoom: 25,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
@@ -217,54 +233,39 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
     var layerDefaultStyle = function() {
 
+      if (map._layers[$scope.featureClickedIdLeaflet]) {
+        if (map._layers[$scope.featureClickedIdLeaflet].feature.geometry.type == "Polygon") {
 
-      if (map._layers[$scope.zoneClicked]) {
-        if (map._layers[$scope.zoneClicked].feature.geometry.type == "Polygon") {
-
-      console.log("ho");
-          map._layers[$scope.zoneClicked].setStyle(polyStyle);
+          console.log("ho");
+          map._layers[$scope.featureClickedIdLeaflet].setStyle(polyStyle);
         } else {
-          map._layers[$scope.zoneClicked  ].setStyle(lineStyle);
+          map._layers[$scope.featureClickedIdLeaflet].setStyle(lineStyle);
         }
       };
 
-      //   map.eachLayer(function(layer) {
 
-      //     if (layer.feature) {
-
-      //       if (layer.feature.geometry.type == "Polygon") {
-
-      //         layer.setStyle(polyStyle);
-
-      //       } else {
-
-      //         layer.setStyle(lineStyle);
-      //       }
-      //     };
-
-      //   });
-
-      //   if ($scope.IdLayerCliked >= 0) {
-
-      //     if (map._layers[$scope.IdLayerCliked]) {
-      //       map._layers[$scope.IdLayerCliked].setStyle(highlightStyle);
-      //     };
-      //     map._layers[layerID].setStyle(highlightStyle);
-      //     $scope.IdLayerCliked = layerID;
-      //   } else {
-      //     map._layers[layerID].setStyle(highlightStyle);
-      //     $scope.IdLayerCliked = layerID;
-      //   };
     }
 
   });
 
 
+  $scope.editData = function() {
+
+
+    $scope.polyEditedData = $scope.currentFeature;
+    ngDialog.open({
+      template: 'templateId',
+      scope : $scope
+    });
+
+
+
+  }
 
   $scope.editGeom = function() {
     $scope.polygon = {};
 
-    $scope.polygon.lineId = $scope.zoneClicked._id;
+    $scope.polygon.lineId = $scope.currentFeature._id;
 
     $scope.editMode = true;
 
@@ -355,6 +356,29 @@ drawApp.factory("PolygonService", function($http) {
       });
     }
   };
+});
+
+drawApp.controller('TagsController', function($scope, $rootScope, tags, $log) {
+
+
+  $scope.deleteTag = function(index) {
+    tags.data.splice(index, 1);
+  }
+
+  $scope.addTag = function(index) {
+
+    tags.data.push(
+      $scope.selectFlores.originalObject
+    );
+    $scope.selectFlores = "";
+  }
+});
+
+
+drawApp.factory("tags", function() {
+  var tags = {};
+  tags.data = [];
+  return tags;
 });
 
 
