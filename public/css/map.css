@@ -2,34 +2,13 @@ html,
 body {
   height: 100%;
 }
-.dlPdf {
-  background-color: #9989F0;
-  border-color: #9989F0;
-  color: #fff;
-  -moz-user-select: none;
-  background-image: none;
-  margin-bottom: 0.2em;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.42857;
-  padding: 6px 12px;
-  text-align: center;
-  vertical-align: middle;
-  white-space: nowrap;
-  width: 100%;
-}
-
 .talusNum {
   text-align: center;
   font-size: 18px;
   font-style: bold;
   margin: 0;
   padding: 0;
-
 }
-
 .edit {
   background-color: #ffce42;
   border-color: #ffce42;
@@ -43,6 +22,24 @@ body {
   font-weight: 400;
   line-height: 1.42857;
   padding: 3px 12px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 100%;
+}
+.dlPdf {
+  background-color: #9989F0;
+  border-color: #9989F0;
+  color: #fff;
+  -moz-user-select: none;
+  background-image: none;
+  margin-bottom: 0.2em;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857;
+  padding: 6px 12px;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
