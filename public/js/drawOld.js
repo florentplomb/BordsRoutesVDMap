@@ -205,7 +205,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
 drawApp.controller('TagsController', function($scope, $rootScope, tags, $log) {
 
-  $scope.tags = tags;
+  // $scope.tags = tags;
 
   $scope.deleteTag = function(index) {
     tags.data.splice(index, 1);

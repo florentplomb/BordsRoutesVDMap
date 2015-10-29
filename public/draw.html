@@ -38,14 +38,15 @@
                 <div ng-controller="TagsController">
                     <label for="exampleInputEmail1">Espèce(s) observée(s):</label>
                     <div>
-                        <angucomplete-alt id="ex2" placeholder="Indiquez le nom d'une fleur" pause="100" selected-object="selectFlores" local-data="especesName" search-fields="espece" title-field="espece" minlength="1" input-class="form-control form-control-small" match-class="highlight" />
+                        <angucomplete-alt id="ex2" placeholder="Indiquez le nom d'une fleur" pause="300" selected-object="selectFlores" local-data="especesName" search-fields="espece" title-field="espece" minlength="3" input-class="form-control form-control-small" match-class="highlight" />
                     </div>
                     <button id="addFlower" ng-disabled="!selectFlores" type="button" class="btn btn-success" ng-click="addTag()">Ajouter</button>
                     <ul id="tag" class="nav item">
                         <div id="newEsp" ng-show="tags.data.length">
-                            <li ng-repeat="tag in tags.data track by $index | limitTo: 3">
-                                <span>- {{tag.espece}}</span>
-                                <button ng-click="deleteTag()" type="button" class="btn">delete</button>
+                            <li ng-repeat="(index,tag) in tags.data">
+                                <a >- {{tag.espece}}</a>
+                                <span ng-click="deleteTag(index)" style="color:red"> X </span>
+
                             </li>
                         </div>
                     </ul>
@@ -71,7 +72,8 @@
                 <label for="exampleInputEmail1">Entretien:</label>
                 <textarea type="text" class="form-control" ng-model="polyEditedData.properties.ENTRETIEN" id="exampleInputEmail1" placeholder="Entrer un état sur l'entretien"></textarea>
                 <div>Plumettaz: {{polyEditedData.properties.PLUMETTAZ}}</div>
-                <button id="send" type="submit" type="button" class="btn btn-primary" ng-click="closeThisDialog('Cancel'); storeEditPolyData();  ">Envoyer</button>
+
+                <button id="send" type="submit" type="button" class="btn btn-primary" ng-click="storeEditPolyData();closeThisDialog('Cancel');  ">Envoyer</button>
             </div>
         </form>
     </script>
@@ -96,9 +98,12 @@
     </div>
     <div class="info">
         <div class="titreInfo"> Informations </div>
+       <p class="talusNum"> N° Talus: {{infoZone.numTalus}} </p>
         <div ng-show="infoZone.id" class="dlPdf"><a TARGET="_blank" ng-href="http://www.humagis.ch/~jomtalus/PDF/F{{infoZone.id}}.pdf">Download PDF</a> </div>
-        <button class="edit" ng-show="infoZone.id" confirmed-click="editGeom()" ng-confirm-click="Etes vous sûr de vouloir modifier la géométrie de cette zone ?">Modifier la géométrie</button>
-        <button class="edit" ng-show="infoZone.id" ng-click="editData()">Modifier les données</button>
+
+        <button class="edit" ng-show="lineSelected" confirmed-click="editGeom()" ng-confirm-click="Etes vous sûr de vouloir modifier la géométrie de cette zone ?">Modifier la géométrie</button>
+        <button class="edit" ng-show="polySelected" ng-click="editData()">Modifier les données</button>
+
         <div class="titre margeTop"><img id="mapIcon" src='/img/loc.png' alt='Commune' width='26' height='26' align='top' /> Commune(s)
         </div>
         <div id="LocCommunes" ng-repeat="commune in infoZone.commune">

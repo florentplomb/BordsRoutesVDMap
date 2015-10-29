@@ -57,7 +57,8 @@ router.route("/updateData")
     Polygon.findById(req.body.polygon._id)
       .select("properties")
       .exec(function(err, poly) {
-        if (err) return res.status(400).json("poly introuvable");
+        if (err) return res.status(400).json("error");
+        if (poly == undefined) return res.status(400).json("poly introuvable");
 
         if (req.body.polygon.properties.ENTRETIEN) {
           poly.properties.ENTRETIEN = req.body.polygon.properties.ENTRETIEN;
@@ -121,9 +122,9 @@ router.route("/fromline")
 
     var polygon = new Polygon();
 
-    console.log(req.body.polygon.lineId);
+    console.log(req.body.polygon._id);
 
-    Zone.findById(req.body.polygon.lineId)
+    Zone.findById(req.body.polygon._id)
       .select("properties")
       .exec(function(err, zone) {
         if (err) return res.status(400).json("zone introuvable");
