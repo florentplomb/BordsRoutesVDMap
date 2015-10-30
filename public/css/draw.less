@@ -1,22 +1,111 @@
-html,
+  html,
 body {
     height: 100%;
 }
 
+.talusNum {
+  text-align: center;
+  font-size: 18px;
+  font-style: bold;
+  margin: 0;
+  padding: 0;
 
-.leaflet-right .leaflet-control {
-    margin-right: 10px;
 }
-.leaflet-top .leaflet-control {
-    margin-top: 10px;
+
+.edit {
+  background-color: #ffce42;
+  border-color: #ffce42;
+  color: #fff;
+  -moz-user-select: none;
+  background-image: none;
+  margin-bottom: 0.2em;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857;
+  padding: 3px 12px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 100%;
 }
-.leaflet-right .leaflet-control {
-    float: right;
+
+.dlPdf{
+
+    background-color: #9989F0;
+    border-color: #9989F0;
+    color: #fff;
+    -moz-user-select: none;
+    background-image: none;
+    margin-bottom: 0.2em;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 100%;
+
 }
-.leaflet-control-layers {
-    background: #fff none repeat scroll 0 0;
-    border-radius: 5px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+
+.comfirmPdf{
+
+ color: red;
+
+
+}
+
+.confirmPoly{
+
+    background-color: #9989F0;
+    border-color: #9989F0;
+    color: #fff;
+    -moz-user-select: none;
+    background-image: none;
+    margin-bottom: 0.2em;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 90%;
+
+
+}
+
+.dlPdf a {
+  color : #fff;
+}
+
+.titreInfo{
+    -moz-user-select: none;
+    background-image: none;
+    //border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 2em;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    color: #fff;
+      margin-bottom: 0.5em;
+
+
+
 }
 
 #map-wrapper {
@@ -26,86 +115,219 @@ body {
 
 }
 
-.listeFleurs{
-    margin: 0px;
-    padding: 0px;
-}
 .highlight {
     color: #ff0000;
 }
 
-.leaflet-draw-toolbar .leaflet-draw-draw-polygon {
-    visibility: hidden;
+.titre{
+    font-size: 1.3em;
+  font-family:AlrightSansLight;
+  margin-bottom: 0.2em;
+  background: #efefef;
+  text-align: center;
 
 }
-.leaflet-draw-toolbar .leaflet-draw-draw-rectangle{
-  visibility: hidden;
-}
-.leaflet-draw-toolbar .leaflet-draw-draw-circle{
-  visibility: hidden;
+
+
+
+
+
+#LocCommunes{
+  text-align: left;
+  font-size: 1.3em;
+  padding-left: 1.1em;
+  padding-bottom :0.2em;
 }
 
-.leaflet-draw-toolbar .leaflet-draw-draw-marker{
-    visibility: hidden;
+.listeFleurs{
+    margin: 0px;
+    padding: 0px;
 }
 
-#addFlower{
-  float: right;
-  margin-top: 0.6em;
+
+// .angular-leaflet-control-layers {
+//   position: absolute;
+//   background: white;
+//   z-index: 100;
+//   left: 10px;
+//   top: 100px;
+//   width: 200px;
+//   box-shadow: 1px 1px 5px #333;
+//   padding: 5px;
+// }
+
+
+#ex1{
+    margin-bottom: 1em;
+}
+#mapIcon {
+    color: black;
+    margin-right: 2px;
+    vertical-align: -3px;
 }
 
-#newEsp {
-      background-color: #fff;
+.form-control{
+    margin-bottom: 1em;
+}
+
+// #formu{
+//   background-image: url("../img/start1.jpg");
+
+// }
+
+h4{
+  color : #9889f0;
+}
+
+#chapeau  {
+  color :  #949494;
+  text-decoration: none;
+  outline: 0;
+
+}
+
+// .leaflet-container .leaflet-control-attribution{
+//   visibility: hidden;
+// }
+
+#confirm{
+
+
+    background-color:#9889f0;
+    color: #ebebeb;
+    font-size: 20px;
+    width: 100%;
+
+}
+
+#credit{
+  padding-left: 2px;
+  position: fixed;
+    bottom: 0px;
+    width: 20%;
+    right: 1%;
+    background-color: #ebebeb;
+    color: black;
+    font-size: 12px;
+    a{
+      text-decoration: none;
+    }
+}
+
+#goMap{
+  float:right;
+  background-color: #60aa00;
+    color: #fff;
+}
+
+
+.fa-external-link:before {
+  content: "\f08e";
+  outline: 0;
+}
+
+.ngdialog.ngdialog-theme-default .ngdialog-content {
+    width: 55%;
+   // background-image: url("../img/start1d.jpg");
+    height: auto;
+}
+.margeTop{
+  margin-top: 1em;
+}
+
+img {
+    vertical-align: -6px;
+
+
+}
+
+li {
+
+       list-style:none;
+
+
+}
+
+#allFleurs li {
+         margin-left: 2.3em;
+       list-style:circle;
+       color:#f8265f;
+
+}
+.colorLink{
+
+  color: #f8265f;
+
+}
+
+#searchCommunes {
+    position: absolute;
+    top: 10%;
+    width: 20%;
+    left: 1%;
+}
+#work{
+    position: absolute;
+    top: 1%;
+    right: 40%;
+    background: red;
+    color: #ffffff;
+    border: solid 1px;
+    padding: 1em;
+}
+.info{
+    position: absolute;
+    top: 0%;
+    right : 0%;
+    background:#ffffff;
+    border: solid 1px;
+    //padding: 1em;
+    height: 100%;
+    width: 15%;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+   // border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    font-size: 14px;
+   // transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+
+}
+#infoCommunes {
+    position: absolute;
+    bottom: 5%;
+    height: 20%;
+    width: 20%;
+    left: 1%;
+    background: #ffffff;
+    border: solid 1px;
+    padding: 0.5em;
+    background-color: #fff;
     background-image: none;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
     color: #555;
-    display: block;
     font-size: 14px;
-    margin-top: 0.6em;
-    margin-bottom: 0.6em;
-    color : #439d43;
-    line-height: 1.42857;
-    padding: 6px 12px;
-    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
-    width: 70%
-
-}
-#send{
-margin-left: 25em;
-margin-top: 1em;
-}
-
-#newCom {
-      background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-    color: #555;
-    display: block;
-    font-size: 14px;
-
-    margin-bottom: 0.6em;
-    color : #ac0404;
-    line-height: 1.42857;
-    padding: 6px 12px;
-    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
-    width: 70%
-
 }
 
 
+a {
+    color: #00B7FF;
+}
 
 #map {
-    width: 100%;
+    width: 85%;
     height: 100%;
 }
 
-
-
-
+// Draw controls
+input {
+    font-size: 2em;
+    width: 2em;
+    margin-right: 10px;
+}
 
 @font-face {
     font-family: 'helsinkiregular';
