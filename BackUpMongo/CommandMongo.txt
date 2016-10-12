@@ -1,5 +1,5 @@
 
-################## Sauvgarde et restore de la bd complete ###########################
+/*********** Sauvgarde et restore de la bd complete ********************/
 
 mongodump -d <our database name> -o <directory_backup>
 
@@ -7,9 +7,9 @@ And to "restore/import" that, i used (from directory_backup/dump/):
 
 mongorestore <our database name>
 
-C:\Program Files\MongoDB 2.6 Standard\bin>mongorestore C:\Users\Florent\Dropbox\HeigVd\3\A_TB\TPB\BackUpMongo\appmap
+C:\Program Files\MongoDB 2.6 Standard\bin>mongorestore -d nomdelabdAcréer C:\Users\Florent\Dropbox\HeigVd\3\A_TB\TPB\BackUpMongo\appmap
 
-################## Commande export/import  collection JSON #########
+/****************** Commande export/import  collection JSON *******///
 
 mongoexport --db test --collection traffic --out traffic.json
 
@@ -17,16 +17,22 @@ mongoexport --db test --collection traffic --out traffic.json
 mongoimport --db users --collection contacts --file contacts.json
 
 
+/********* INDEXE POUR REQUETE GEOSPTAIAL (si no y'e n à pour 10ans) ****************************/
+
+db.communes.createIndex( { geometry : "2dsphere" } )
 
 
 
-################## Heroku PAS SE STRESSER après une commande importe sa prend du temps ##################
+
+################## Heroku PAS SE STRESSER après une commande importe sa prend du temps
 
 Import database
-mongorestore -h ds063789.mongolab.com:63789 -d heroku_app36873650 -u <user> -p <password> <sur mon ordi>
+mongorestore -h ds063789.mongolab.com:63789 -d heroku_app36873650 -u <user> -p <password> <dossier sur mon ordi>
 Export database
 mongodump -h ds063789.mongolab.com:63789 -d heroku_app36873650 -u <user> -p <password> -o <output directory>
 Import collection
 mongorestore -h ds063789.mongolab.com:63789 -d heroku_app36873650 -u <user> -p <password> <input .bson file>
 Export collection
 mongodump -h ds063789.mongolab.com:63789 -d heroku_app36873650 -c <collection> -u <user> -p <password> -o <output directory>
+
+mongoimport --jsonArray -h ds047958.mongolab.com:47958 -d heroku_zn40dwdc -c espName -u geofleurs -p geofleurs --file C:\Users\Florent\Dropbox\HeigVd\3\A_TB\TB\especes_CH_NomC_NOML.json

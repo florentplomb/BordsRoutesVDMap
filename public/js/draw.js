@@ -271,7 +271,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
           $scope.especesName = data;
 
         }).error(function(err) {
-          $scope.error = err;
+          alert("Une erreur s’est produite, la dernière opération n'a pas été enregistrée , veuillez actualiser la page et recommencez");
 
         })
 
@@ -303,7 +303,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
           var cb = function(err, zoneSaved) {
             if (err) {
-              $scope.error = err;
+              alert("Une erreur s’est produite, la dernière opération n'a pas été enregistrée , veuillez actualiser la page et recommencez");
             } else {
 
               console.log("SUCESS" + zoneSaved)
@@ -377,7 +377,7 @@ drawApp.controller('DrawCtrl', function($scope, $filter, leafletData, ngDialog, 
 
           var cb = function(err, zoneSaved) {
             if (err) {
-              $scope.error = err;
+              alert("Une erreur s’est produite, la dernière opération n'a pas été enregistrée , veuillez actualiser la page et recommencez");
             } else {
               console.log("SUCESS" + zoneSaved)
               window.location.reload();
