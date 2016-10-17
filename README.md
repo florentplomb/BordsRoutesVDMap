@@ -18,7 +18,7 @@ Url de démonstration : http://fleurs-vd.herokuapp.com/
 
 **Front-end**
 
-*-leaflet* 
+*-Leaflet* 
 
 *-AngularsJS*
 
